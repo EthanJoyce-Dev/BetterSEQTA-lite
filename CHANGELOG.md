@@ -3,6 +3,13 @@
 BetterSEQTA+ Lite has its own version numbers ([semver](https://semver.org)), starting at 1.0.0.
 Each release notes which BetterSEQTA+ version it is based on.
 
+## 1.2.0
+
+Based on BetterSEQTA+ 3.7.2.
+
+- Adds dedicated Chrome Web Store and AMO builds, without the GitHub updater or Google Calendar sync
+- Releases include store upload packages and a source archive for AMO review
+
 ## 1.1.0
 
 Based on BetterSEQTA+ 3.7.2.
