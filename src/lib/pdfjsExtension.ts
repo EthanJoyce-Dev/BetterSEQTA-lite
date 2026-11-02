@@ -1,4 +1,3 @@
-import * as pdfjs from "pdfjs-dist";
 import browser from "webextension-polyfill";
 
 /** Static copies in `src/public` (see `scripts/copy-pdfjs-assets.mjs`, manifest web_accessible_resources). */
@@ -9,13 +8,14 @@ function extensionAssetUrl(relativePath: string): string {
   return browser.runtime.getURL(relativePath.replace(/^\/+/, ""));
 }
 
-let workerConfigured = false;
-
-/** Required before pdfjs spawns a worker (content-script / extension isolate). */
-export function ensurePdfjsWorker(): void {
-  if (workerConfigured) return;
+/**
+ * pdf.js is ~450 KB, so it is only imported when a PDF actually needs reading.
+ * The worker is configured before pdfjs spawns it (content-script / extension isolate).
+ */
+export async function loadPdfjs() {
+  const pdfjs = await import("pdfjs-dist");
   pdfjs.GlobalWorkerOptions.workerSrc = extensionAssetUrl(PDF_WORKER_RESOURCE);
-  workerConfigured = true;
+  return pdfjs;
 }
 
 /** Page-context script on Firefox must load these chrome-extension:// URLs (see web_accessible_resources). */

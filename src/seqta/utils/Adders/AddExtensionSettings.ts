@@ -3,11 +3,17 @@ import {
   closeExtensionPopup,
   SettingsClicked,
 } from "../Closers/closeExtensionPopup";
-import renderSvelte from "@/interface/main";
 import { SettingsResizer } from "@/seqta/ui/SettingsResizer";
-import Settings from "@/interface/pages/settings.svelte";
 
 let isSettingsRendered = false;
+
+/** The settings UI (Svelte, React colour picker, CodeMirror) is only fetched when first needed. */
+export function loadSettingsUI() {
+  return Promise.all([
+    import("@/interface/main"),
+    import("@/interface/pages/settings.svelte"),
+  ]);
+}
 
 function extensionOutsideClickHandler(extensionPopup: HTMLElement) {
   return (event: MouseEvent) => {
@@ -38,20 +44,18 @@ export function addExtensionSettings() {
   (extensionContainer ?? document.body).addEventListener("click", handler, false);
 }
 
-export function renderSettingsIfNeeded() {
+export async function renderSettingsIfNeeded() {
   if (isSettingsRendered) return;
-  
+
   const extensionPopup = document.getElementById("ExtensionPopup");
   if (!extensionPopup) return;
 
   try {
-    const shadow = extensionPopup.attachShadow({ mode: "open" });
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => renderSvelte(Settings, shadow));
-    } else {
-      renderSvelte(Settings, shadow);
-    }
     isSettingsRendered = true;
+    const shadow = extensionPopup.attachShadow({ mode: "open" });
+    const [{ default: renderSvelte }, { default: Settings }] =
+      await loadSettingsUI();
+    renderSvelte(Settings, shadow);
   } catch (err) {
     console.error(err);
   }

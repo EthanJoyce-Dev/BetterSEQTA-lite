@@ -7,10 +7,6 @@ import {
 } from "@/seqta/utils/Openers/OpenMenuOptions";
 
 import { ThemeManager } from "@/plugins/built-in/themes/theme-manager";
-import {
-  CloseThemeCreator,
-  OpenThemeCreator,
-} from "@/plugins/built-in/themes/ThemeCreator";
 import sendThemeUpdate from "@/seqta/utils/sendThemeUpdate";
 import hideSensitiveContent from "@/seqta/ui/dev/hideSensitiveContent";
 
@@ -83,7 +79,9 @@ export class MessageHandler {
 
       case "OpenThemeCreator":
         const themeID = request?.body?.themeID;
-        OpenThemeCreator(themeID ? themeID : "");
+        void import("@/plugins/built-in/themes/ThemeCreator").then(
+          ({ OpenThemeCreator }) => OpenThemeCreator(themeID ? themeID : ""),
+        );
         closeExtensionPopup();
         sendResponse({ status: "success" });
         break;
@@ -95,14 +93,16 @@ export class MessageHandler {
         return true;
 
       case "CloseThemeCreator":
-        try {
-          CloseThemeCreator();
-        } catch (error) {
-          console.error("Error closing theme creator:", error);
-          sendResponse({ status: "error" });
-        }
-        sendResponse({ status: "success" });
-        break;
+        import("@/plugins/built-in/themes/ThemeCreator")
+          .then(({ CloseThemeCreator }) => {
+            CloseThemeCreator();
+            sendResponse({ status: "success" });
+          })
+          .catch((error) => {
+            console.error("Error closing theme creator:", error);
+            sendResponse({ status: "error" });
+          });
+        return true;
 
       case "HideSensitive":
         hideSensitiveContent();

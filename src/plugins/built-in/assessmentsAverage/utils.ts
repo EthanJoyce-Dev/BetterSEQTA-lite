@@ -6,13 +6,7 @@ import {
   getEngageAssessmentReportUrl,
   requestEngageAssessmentPdf,
 } from "./engage.ts";
-import {
-  ensurePdfjsWorker,
-  getPdfjsPageContextUrls,
-} from "@/lib/pdfjsExtension.ts";
-import * as pdfjs from "pdfjs-dist";
-
-ensurePdfjsWorker();
+import { getPdfjsPageContextUrls, loadPdfjs } from "@/lib/pdfjsExtension.ts";
 
 export const WEIGHTING_SCHEMA_VERSION = 1;
 
@@ -625,6 +619,7 @@ export async function extractPDFText(url: string): Promise<string> {
       throw new Error("PDF response is empty");
     }
 
+    const pdfjs = await loadPdfjs();
     const pdf = await pdfjs.getDocument({
       data: arrayBuffer,
       useSystemFonts: true,

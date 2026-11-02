@@ -5,7 +5,10 @@ import {
 } from "./Closers/closeExtensionPopup";
 import { animate } from "motion";
 import { settingsState } from "./listeners/SettingsState";
-import { renderSettingsIfNeeded } from "./Adders/AddExtensionSettings";
+import {
+  loadSettingsUI,
+  renderSettingsIfNeeded,
+} from "./Adders/AddExtensionSettings";
 import { delay } from "./delay";
 
 export function setupSettingsButton() {
@@ -13,11 +16,16 @@ export function setupSettingsButton() {
   const extensionPopup = document.getElementById("ExtensionPopup");
   if (!AddedSettings || !extensionPopup) return;
 
+  // Start fetching the settings UI on hover so the first click opens quickly.
+  AddedSettings.addEventListener("pointerenter", () => void loadSettingsUI(), {
+    once: true,
+  });
+
   AddedSettings.addEventListener("click", async () => {
     if (SettingsClicked) {
       closeExtensionPopup(extensionPopup as HTMLElement);
     } else {
-      renderSettingsIfNeeded();
+      await renderSettingsIfNeeded();
 
       await delay(30);
       
