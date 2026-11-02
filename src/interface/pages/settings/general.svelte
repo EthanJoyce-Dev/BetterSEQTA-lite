@@ -118,6 +118,9 @@
     loadPluginSettings();
   })
 
+  /** Store builds update through the store and leave out Google Calendar sync. */
+  const storeBuild = __STORE_BUILD__;
+
   const { showColourPicker, showFontPicker, showDisclaimer, standalone = false } = $props<{
     showColourPicker: () => void;
     showFontPicker: () => void;
@@ -410,17 +413,19 @@
   </div>
   {/each}
 
-  <div class="border-none">
-    <div class="p-1 my-1 from-white to-zinc-100 bg-gradient-to-br rounded-xl border shadow-sm border-zinc-200/50 dark:border-zinc-700/40 dark:to-zinc-900/50 dark:from-zinc-900/40">
-      <GoogleCalendarSync {standalone} />
+  {#if !storeBuild}
+    <div class="border-none">
+      <div class="p-1 my-1 from-white to-zinc-100 bg-gradient-to-br rounded-xl border shadow-sm border-zinc-200/50 dark:border-zinc-700/40 dark:to-zinc-900/50 dark:from-zinc-900/40">
+        <GoogleCalendarSync {standalone} />
+      </div>
     </div>
-  </div>
 
-  <div class="border-none">
-    <div class="p-1 my-1 from-white to-zinc-100 bg-gradient-to-br rounded-xl border shadow-sm border-zinc-200/50 dark:border-zinc-700/40 dark:to-zinc-900/50 dark:from-zinc-900/40">
-      <UpdateCheck />
+    <div class="border-none">
+      <div class="p-1 my-1 from-white to-zinc-100 bg-gradient-to-br rounded-xl border shadow-sm border-zinc-200/50 dark:border-zinc-700/40 dark:to-zinc-900/50 dark:from-zinc-900/40">
+        <UpdateCheck />
+      </div>
     </div>
-  </div>
+  {/if}
 
   <div class="p-1 border-none"></div>
 

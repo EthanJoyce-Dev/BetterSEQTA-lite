@@ -252,9 +252,11 @@ async function LoadPageElements(): Promise<void> {
   await handleSublink(sublink);
 
   // Runs after the page is up (and only when signed in), so it never delays loading.
-  void autoSyncGoogleCalendarIfDue().catch((err) =>
-    console.warn("[BetterSEQTA+ Lite] Calendar auto-sync failed:", err),
-  );
+  if (!__STORE_BUILD__) {
+    void autoSyncGoogleCalendarIfDue().catch((err) =>
+      console.warn("[BetterSEQTA+ Lite] Calendar auto-sync failed:", err),
+    );
+  }
 }
 
 async function handleSublink(sublink: string | undefined): Promise<void> {

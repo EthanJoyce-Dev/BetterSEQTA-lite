@@ -1,5 +1,6 @@
 # Publishes a release when a version tag (vX.Y.Z) is pushed, e.g. after `npm version patch`:
-# builds Chrome + Firefox, attaches them to the GitHub release with the CHANGELOG notes,
+# builds Chrome + Firefox (GitHub and store versions), attaches them and a source zip to
+# the GitHub release with the CHANGELOG notes,
 # then points updates.json (the Firefox build's update_url) at the new .xpi so
 # installed copies update themselves.
 name: Release
@@ -51,15 +52,20 @@ jobs:
           cat notes.md
 
       - name: Create or update GitHub release
+        env:
+          ASSETS: >-
+            ${{ steps.build.outputs.firefox_xpi }}
+            ${{ steps.build.outputs.chrome_zip }}
+            ${{ steps.build.outputs.amo_xpi }}
+            ${{ steps.build.outputs.cws_zip }}
+            ${{ steps.build.outputs.source_zip }}
         run: |
           VERSION="${{ steps.build.outputs.version }}"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" --clobber \
-              "${{ steps.build.outputs.firefox_xpi }}" "${{ steps.build.outputs.chrome_zip }}"
+            gh release upload "$TAG" --clobber $ASSETS
           else
             gh release create "$TAG" --verify-tag \
-              --title "BetterSEQTA+ Lite $VERSION" --notes-file notes.md \
-              "${{ steps.build.outputs.firefox_xpi }}" "${{ steps.build.outputs.chrome_zip }}"
+              --title "BetterSEQTA+ Lite $VERSION" --notes-file notes.md $ASSETS
           fi
 
       - name: Point updates.json at the new .xpi

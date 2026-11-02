@@ -198,8 +198,8 @@ const MESSAGE_HANDLERS: Record<string, MessageHandler> = {
   fetchThemes: handleFetchThemes,
   fetchThemeDetails: handleFetchThemeDetails,
   fetchFromUrl: handleFetchFromUrl,
-  ...googleCalendarHandlers,
-  ...updaterHandlers,
+  // Store builds update through the store and don't ship calendar sync.
+  ...(__STORE_BUILD__ ? {} : { ...googleCalendarHandlers, ...updaterHandlers }),
   getSeqtaSession: (req: { baseUrl?: string }, sendResponse: MessageSender, sender?: browser.Runtime.MessageSender) => {
     (async () => {
       try {

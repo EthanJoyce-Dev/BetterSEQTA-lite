@@ -522,13 +522,8 @@ window.addEventListener("message", (event) => {
         response = fiberInstance.getState(payload.key);
         break;
       case "setState":
-        // Handle both function and object updates
-        if (payload.updateFn) {
-          const updateFn = new Function('return ' + payload.updateFn)();
-          fiberInstance.setState(updateFn);
-        } else {
-          fiberInstance.setState(payload.updateObject);
-        }
+        // Plain objects only: never evaluate code sent through postMessage.
+        fiberInstance.setState(payload.updateObject);
         response = {};
         break;
 

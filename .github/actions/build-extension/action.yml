@@ -1,16 +1,25 @@
 name: Build Extension
-description: Install dependencies, build the Chrome and Firefox extensions, and package them.
+description: Build the GitHub and store versions for Chrome and Firefox, lint the AMO build, and package everything.
 
 outputs:
   version:
     description: Version from package.json
     value: ${{ steps.version.outputs.version }}
   chrome_zip:
-    description: Path to the Chrome extension zip
+    description: GitHub Chrome build (load unpacked)
     value: ${{ steps.package.outputs.chrome_zip }}
   firefox_xpi:
-    description: Path to the Firefox extension (.xpi)
+    description: GitHub Firefox build (self-updating via updates.json)
     value: ${{ steps.package.outputs.firefox_xpi }}
+  cws_zip:
+    description: Chrome Web Store upload
+    value: ${{ steps.package.outputs.cws_zip }}
+  amo_xpi:
+    description: addons.mozilla.org upload
+    value: ${{ steps.package.outputs.amo_xpi }}
+  source_zip:
+    description: Source code for AMO review
+    value: ${{ steps.package.outputs.source_zip }}
 
 runs:
   using: composite
@@ -22,7 +31,7 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: npm install --legacy-peer-deps
+      run: npm ci
 
     - name: Read version
       id: version
@@ -31,7 +40,11 @@ runs:
 
     - name: Build extension
       shell: bash
-      run: npm run build
+      run: npm run build && npm run build:store
+
+    - name: Lint the AMO build
+      shell: bash
+      run: npm run lint:amo
 
     - name: Package builds
       id: package
@@ -40,5 +53,11 @@ runs:
         BASE="betterseqta-plus-lite-${{ steps.version.outputs.version }}"
         (cd dist/chrome && zip -qr "../${BASE}-chrome.zip" .)
         (cd dist/firefox && zip -qr "../${BASE}.xpi" .)
+        (cd dist/chrome-store && zip -qr "../${BASE}-cws.zip" .)
+        (cd dist/firefox-store && zip -qr "../${BASE}-amo.xpi" .)
+        git archive --format=zip -o "dist/${BASE}-source.zip" HEAD
         echo "chrome_zip=dist/${BASE}-chrome.zip" >> "$GITHUB_OUTPUT"
         echo "firefox_xpi=dist/${BASE}.xpi" >> "$GITHUB_OUTPUT"
+        echo "cws_zip=dist/${BASE}-cws.zip" >> "$GITHUB_OUTPUT"
+        echo "amo_xpi=dist/${BASE}-amo.xpi" >> "$GITHUB_OUTPUT"
+        echo "source_zip=dist/${BASE}-source.zip" >> "$GITHUB_OUTPUT"

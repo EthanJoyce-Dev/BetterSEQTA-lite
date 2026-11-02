@@ -67,6 +67,7 @@ export const PackageManagerEnum = {
  * @property {string} [browser_specific_settings.gecko.strict_min_version] - The minimum version of Firefox the extension is compatible with.
  * @property {string} [browser_specific_settings.gecko.strict_max_version] - The maximum version of Firefox the extension is compatible with.
  * @property {string} [browser_specific_settings.gecko.update_url] - Where Firefox checks for updates instead of AMO.
+ * @property {object} [browser_specific_settings.gecko.data_collection_permissions] - Firefox's built-in data-collection consent declaration.
  */
 export type BrowserSpecificSettings = {
   browser_specific_settings?: {
@@ -75,7 +76,9 @@ export type BrowserSpecificSettings = {
       strict_min_version?: string;
       strict_max_version?: string;
       update_url?: string;
+      data_collection_permissions?: { required: string[]; optional?: string[] };
     };
+    gecko_android?: { strict_min_version?: string };
   };
 };
 

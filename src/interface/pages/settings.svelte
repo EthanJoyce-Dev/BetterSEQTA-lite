@@ -94,9 +94,11 @@
       StandaloneStore.setStandalone(true);
     }
 
-    void checkForUpdate().then((info) => {
-      update = info;
-    });
+    if (!__STORE_BUILD__) {
+      void checkForUpdate().then((info) => {
+        update = info;
+      });
+    }
   });
 </script>
 

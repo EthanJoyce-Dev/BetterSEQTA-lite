@@ -57,14 +57,10 @@ class ReactFiber {
     });
   }
 
-  async setState(update: any | ((prevState: any) => any)): Promise<ReactFiber> {
-    const updateFnString =
-      typeof update === "function" ? update.toString() : null;
-    const updateObject = typeof update !== "function" ? update : null;
-
+  /** Merges a plain object into the component's state (functions can't cross into the page). */
+  async setState(update: Record<string, any>): Promise<ReactFiber> {
     await this.sendMessage("setState", {
-      updateFn: updateFnString,
-      updateObject,
+      updateObject: update,
     });
     return this;
   }

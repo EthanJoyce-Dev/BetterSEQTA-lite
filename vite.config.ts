@@ -55,11 +55,16 @@ function withDevManifestCsp(manifest: Manifest, command: string): Manifest {
 }
 
 const mode = process.env.MODE || "chrome"; // Check the environment variable to determine which build type to use.
+/** Store builds (Chrome Web Store / AMO) drop the GitHub updater and Google Calendar sync. */
+const isStoreBuild = process.env.STORE === "true";
 //const sourcemap = (process.env.SOURCEMAP === "true") || false; // Check whether we want sourcemaps.
 /** Million's compiler can emit `new Function()`, which Firefox extension pages block (strict CSP, no unsafe-eval). */
 const useMillion = mode.toLowerCase() !== "firefox";
 
 export default defineConfig(({ command }) => ({
+  define: {
+    __STORE_BUILD__: JSON.stringify(isStoreBuild),
+  },
   plugins: [
     base64Loader,
     InlineWorkerPlugin(),
@@ -112,7 +117,7 @@ export default defineConfig(({ command }) => ({
     format: "es",
   },
   build: {
-    outDir: resolve(__dirname, "dist", mode),
+    outDir: resolve(__dirname, "dist", isStoreBuild ? `${mode}-store` : mode),
     emptyOutDir: false,
     minify: true,
     // Preload <link>s resolve against the host page in content scripts (404s on

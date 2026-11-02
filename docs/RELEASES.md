@@ -21,12 +21,25 @@ The [Release workflow](../.github/workflows/release.yml) then:
 
 - checks the tag matches `package.json`
 - builds Chrome and Firefox
+- builds the store versions and runs addons-linter on the AMO build
 - creates the GitHub release with the CHANGELOG notes, attaching:
-  - `betterseqta-plus-lite-X.Y.Z.xpi` (Firefox / Zen)
+  - `betterseqta-plus-lite-X.Y.Z.xpi` (Firefox / Zen, self-updating)
   - `betterseqta-plus-lite-X.Y.Z-chrome.zip` (Chrome and other Chromium browsers, load unpacked)
+  - `betterseqta-plus-lite-X.Y.Z-amo.xpi`: upload to addons.mozilla.org
+  - `betterseqta-plus-lite-X.Y.Z-cws.zip`: upload to the Chrome Web Store
+  - `betterseqta-plus-lite-X.Y.Z-source.zip`: source for AMO review
 - updates [`updates.json`](../updates.json) on `main` to point at the new `.xpi`
 
 To republish an existing tag (for example after fixing the workflow), run the Release workflow manually from the Actions tab with that tag.
+
+## Store versions
+
+`npm run build:store` builds the Chrome Web Store and AMO versions into `dist/chrome-store` and `dist/firefox-store`. They differ from the GitHub builds in that they:
+
+- use their own Firefox add-on ID (`betterseqta-lite@ethanjoyce-dev`) and have no `update_url`, since the store handles updates
+- leave out the GitHub updater and Google Calendar sync, so they send no user data (`data_collection_permissions: none`)
+
+Upload them by hand from each release for now. Listing text is in [STORE_LISTING.md](STORE_LISTING.md), and reviewer build steps are in [BUILD.md](../BUILD.md).
 
 ## How updates reach installed copies
 
