@@ -4,6 +4,7 @@ import { getDefaultSettingsState } from "@/seqta/utils/defaultSettings";
 import { ensureStorageDefaults } from "@/seqta/utils/ensureStorageDefaults";
 import { fetchNews } from "./background/news";
 import { googleCalendarHandlers } from "./background/googleCalendar";
+import { updaterHandlers } from "./background/updater";
 
 /**
  * Session-only dev-mode override of the content API base.
@@ -198,6 +199,7 @@ const MESSAGE_HANDLERS: Record<string, MessageHandler> = {
   fetchThemeDetails: handleFetchThemeDetails,
   fetchFromUrl: handleFetchFromUrl,
   ...googleCalendarHandlers,
+  ...updaterHandlers,
   getSeqtaSession: (req: { baseUrl?: string }, sendResponse: MessageSender, sender?: browser.Runtime.MessageSender) => {
     (async () => {
       try {

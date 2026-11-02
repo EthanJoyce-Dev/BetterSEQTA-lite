@@ -1,56 +1,83 @@
-# Manual release workflow only — runs on EthanJoyce-Dev/BetterSEQTA-lite via workflow_dispatch.
-# Bump package.json version on main, confirm when dispatching, then run.
-# Uses the default GITHUB_TOKEN (contents: write).
-
+# Publishes a release when a version tag (vX.Y.Z) is pushed, e.g. after `npm version patch`:
+# builds Chrome + Firefox, attaches them to the GitHub release with the CHANGELOG notes,
+# then points updates.json (the Firefox build's update_url) at the new .xpi so
+# installed copies update themselves.
 name: Release
 
 on:
+  push:
+    tags: ["v*.*.*"]
   workflow_dispatch:
     inputs:
-      version_updated:
-        description: I have already updated the version in package.json
-        type: boolean
+      tag:
+        description: Existing tag to (re)publish, e.g. v1.1.0
         required: true
-        default: false
 
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Confirm version was updated
-        if: inputs.version_updated != true
-        run: |
-          echo "Check the confirmation box: you must update package.json version before releasing."
-          exit 1
-
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
-      - name: Read version
-        id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Check tag matches package.json
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "v$VERSION" ]; then
+            echo "Tag $TAG does not match package.json version $VERSION"
+            exit 1
+          fi
 
       - name: Build extension
         id: build
         uses: ./.github/actions/build-extension
-        with:
-          gh_release_update_check: "true"
-          update_channel: stable
-          release_repo: ${{ github.repository }}
 
-      - name: Create release if missing
+      - name: Release notes from CHANGELOG
         run: |
-          if ! gh release view "${{ steps.version.outputs.version }}" 2>/dev/null; then
-            gh release create "${{ steps.version.outputs.version }}" \
-              --title "${{ steps.version.outputs.version }}" \
-              --notes "Edit this release description on GitHub."
+          VERSION="${{ steps.build.outputs.version }}"
+          awk -v v="$VERSION" '$0 == "## " v {f=1; next} /^## /{f=0} f' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then echo "See CHANGELOG.md." > notes.md; fi
+          cat notes.md
+
+      - name: Create or update GitHub release
+        run: |
+          VERSION="${{ steps.build.outputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" --clobber \
+              "${{ steps.build.outputs.firefox_xpi }}" "${{ steps.build.outputs.chrome_zip }}"
+          else
+            gh release create "$TAG" --verify-tag \
+              --title "BetterSEQTA+ Lite $VERSION" --notes-file notes.md \
+              "${{ steps.build.outputs.firefox_xpi }}" "${{ steps.build.outputs.chrome_zip }}"
           fi
 
-      - name: Upload release assets
+      - name: Point updates.json at the new .xpi
         run: |
-          gh release upload "${{ steps.version.outputs.version }}" \
-            --clobber \
-            "${{ steps.build.outputs.chrome_zip }}" \
-            "${{ steps.build.outputs.firefox_zip }}"
+          VERSION="${{ steps.build.outputs.version }}"
+          XPI="${{ steps.build.outputs.firefox_xpi }}"
+          HASH="sha256:$(sha256sum "$XPI" | cut -d' ' -f1)"
+          LINK="https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$XPI")"
+
+          git fetch origin main
+          git checkout -B main origin/main
+          node scripts/write-update-manifest.mjs "$VERSION" "$LINK" "$HASH"
+          if git diff --quiet -- updates.json; then
+            echo "updates.json already up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates.json
+          git commit -m "chore: point Firefox updates at $TAG"
+          git push origin main

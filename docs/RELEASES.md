@@ -1,267 +1,40 @@
-# GitHub releases, CI, and the update detector
+# Releases and updates
 
-BetterSEQTA+ Lite is distributed on the Chrome Web Store and Firefox Add-ons, but some users sideload builds from GitHub. This document explains how automated builds, releases, and the in-extension update badge work.
+BetterSEQTA+ Lite is released on this repo's [GitHub releases](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases). Installed copies update from there.
 
-All published releases target the upstream repository: **[EthanJoyce-Dev/BetterSEQTA-lite](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite)**.
+## Publishing a release
 
----
+1. Add a `## X.Y.Z` section to [CHANGELOG.md](../CHANGELOG.md) (note the BetterSEQTA+ base version).
+2. Bump the version; this commits and tags `vX.Y.Z`:
 
-## Overview
+   ```bash
+   npm version patch   # or minor / major
+   ```
 
-```mermaid
-flowchart TB
-  subgraph ci [Continuous integration]
-    PrCi[pr-ci.yml — every PR]
-    Mvp[mvp.yml — push to main]
-  end
+3. Push the commit and tag:
 
-  subgraph releases [GitHub releases]
-    Manual[release.yml — manual stable]
-    Nightly[nightly.yml — daily cron]
-  end
+   ```bash
+   git push --follow-tags
+   ```
 
-  subgraph output [Outputs]
-    Zips["betterseqta-plus-lite-VERSION-chrome.zip\nbetterseqta-plus-lite-VERSION-firefox.zip"]
-    GhStable["Release tag: 3.7.0"]
-    GhNightly["Release tag: nightly"]
-    Badge[Update badge in settings]
-  end
+The [Release workflow](../.github/workflows/release.yml) then:
 
-  PrCi -->|build only| NoRelease[No release]
-  Mvp -->|artifact| DistZip[dist.zip artifact]
+- checks the tag matches `package.json`
+- builds Chrome and Firefox
+- creates the GitHub release with the CHANGELOG notes, attaching:
+  - `betterseqta-plus-lite-X.Y.Z.xpi` (Firefox / Zen)
+  - `betterseqta-plus-lite-X.Y.Z-chrome.zip` (Chrome and other Chromium browsers, load unpacked)
+- updates [`updates.json`](../updates.json) on `main` to point at the new `.xpi`
 
-  Manual --> Zips
-  Manual --> GhStable
-  Manual --> Badge
+To republish an existing tag (for example after fixing the workflow), run the Release workflow manually from the Actions tab with that tag.
 
-  Nightly --> Zips
-  Nightly --> GhNightly
-  Nightly --> Badge
-```
+## How updates reach installed copies
 
-| Workflow | Trigger | Creates a release? | Update detector in build? |
-|----------|---------|------------------|---------------------------|
-| `pr-ci.yml` | Every pull request to `main` | No | No |
-| `mvp.yml` | Every push to `main` | No | No |
-| `release.yml` | Manual (`workflow_dispatch`) | Yes — stable version tag | Yes — stable channel |
-| `nightly.yml` | Daily at 03:00 UTC + manual | Yes — reuses `nightly` tag | Yes — nightly channel |
+- **Firefox / Zen:** the Firefox build's `update_url` is `https://raw.githubusercontent.com/EthanJoyce-Dev/BetterSEQTA-lite/main/updates.json`. The browser checks it about once a day and installs newer versions itself. The build is unsigned, so the browser must allow unsigned add-ons (`xpinstall.signatures.required = false`). **Settings > Updates > Check now** shows the latest version, and **Update** asks the browser to install it straight away.
+- **Chrome:** unpacked extensions can't update themselves. Settings shows when a newer release exists and **Update** opens the release; download the zip, replace the extension folder and reload it.
 
----
+## CI
 
-## Shared build action
-
-All release and CI builds that need packaged extensions use the composite action at [`.github/actions/build-extension/action.yml`](../.github/actions/build-extension/action.yml).
-
-It:
-
-1. Installs dependencies (`npm install --legacy-peer-deps`)
-2. Runs `npm run build` (Chrome then Firefox via Vite)
-3. Zips each unpacked folder into sideload-ready archives:
-   - `dist/betterseqta-plus-lite-{version}-chrome.zip`
-   - `dist/betterseqta-plus-lite-{version}-firefox.zip`
-
-The `{version}` comes from `package.json`.
-
-### Build-time flags (release builds only)
-
-Release and nightly workflows pass environment variables into Vite, which bakes them into the extension at compile time via `define` in [`vite.config.ts`](../vite.config.ts):
-
-| Variable | Stable release | Nightly | PR / local dev |
-|----------|----------------|---------|----------------|
-| `GH_RELEASE_UPDATE_CHECK` | `true` | `true` | `false` / unset |
-| `UPDATE_CHANNEL` | `stable` | `nightly` | `stable` (unused) |
-| `GH_RELEASE_REPO` | `EthanJoyce-Dev/BetterSEQTA-lite` | same | same |
-| `BUILD_LABEL` | empty | UTC build date (`YYYY-MM-DD`) | empty |
-
-When `GH_RELEASE_UPDATE_CHECK` is not `true`, the update-checker code is tree-shaken out of the bundle. PR CI builds and local `npm run build` do **not** include the update badge.
-
-To test a release-style build locally:
-
-```bash
-# PowerShell
-$env:GH_RELEASE_UPDATE_CHECK="true"
-$env:UPDATE_CHANNEL="stable"
-npm run build
-
-# bash
-GH_RELEASE_UPDATE_CHECK=true UPDATE_CHANNEL=stable npm run build
-```
-
----
-
-## Stable release (`release.yml`)
-
-**Purpose:** A safe, manual way to publish versioned builds that users can download from GitHub.
-
-**Trigger:** Manual only — Actions → **Release** → **Run workflow**. There is no schedule or automatic trigger.
-
-When dispatching, check **“I have already updated the version in package.json”**. The workflow will not run without that confirmation.
-
-### Before you run it
-
-1. Merge your changes to `main`.
-2. Bump `version` in [`package.json`](../package.json) (e.g. `3.7.0` → `3.8.0`).
-3. Commit and push that bump.
-
-### What the workflow does
-
-1. Aborts if the version confirmation was not checked.
-2. Reads the version from `package.json`.
-3. Builds Chrome and Firefox with the update detector enabled (stable channel).
-4. If no release exists for that tag: creates one (e.g. `3.8.0`) with a placeholder description.
-5. If a release already exists for that tag: **only replaces the zip assets** (`--clobber`). Title and body are left unchanged.
-6. Uploads `betterseqta-plus-lite-{version}-chrome.zip` and `-firefox.zip`.
-
-On first publish, edit the **title** and **release notes** on GitHub afterward. Re-running for the same version refreshes the files only.
-
-### Downloading and installing
-
-1. Open [github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases).
-2. Pick the version you want.
-3. Download `betterseqta-plus-lite-{version}-chrome.zip` or `-firefox.zip`.
-4. Unzip and load the unpacked folder as a temporary extension (Chrome: Extensions → Load unpacked; Firefox: `about:debugging` → Load Temporary Add-on).
-
-**These GitHub builds are for sideloading only. Do not upload them to the Chrome Web Store or Firefox Add-ons.**
-
----
-
-## Nightly release (`nightly.yml`)
-
-**Purpose:** Continuous experimental builds from `main` so testers always have a single place to get the latest code.
-
-**Trigger:**
-
-- Automatically every day at **03:00 UTC**
-- Manually via Actions → **Nightly Release** → **Run workflow**
-
-### What the workflow does
-
-1. Builds from the current `main` branch with the update detector enabled (nightly channel).
-2. Uses a fixed release tag: **`nightly`** (marked as prerelease).
-3. On first run: creates the `nightly` release with the text in [`.github/nightly-release-notes.md`](../.github/nightly-release-notes.md).
-4. On every run: sets the release title to **`Nightly (YYYY-MM-DD)`** (UTC build date) and **replaces** the zip assets on the same release (`--clobber`). The release body is not rewritten.
-5. Packages zips as `betterseqta-plus-lite-nightly-{date}-chrome.zip` / `-firefox.zip`.
-
-The nightly release body warns that builds are experimental and must not be uploaded to extension stores.
-
----
-
-## PR CI (`pr-ci.yml`)
-
-**Purpose:** Verify that every pull request builds cleanly in a fresh environment.
-
-**Trigger:** Every pull request targeting `main`.
-
-**Steps:**
-
-1. `npm install --legacy-peer-deps`
-2. `npm run lint` (ESLint on `src/**/*.{js,ts}`)
-3. Build via the shared action with **no** update detector
-
-No release is created and no artifacts are published for end users.
-
----
-
-## Push CI (`mvp.yml`)
-
-**Purpose:** Build verification when code lands on `main`.
-
-**Trigger:** Push to `main` only (not pull requests — those use `pr-ci.yml`).
-
-Uploads a `dist.zip` artifact containing the full `dist/` folder for debugging. No release, no update detector.
-
----
-
-## Authentication
-
-Release workflows run **only on [EthanJoyce-Dev/BetterSEQTA-lite](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite)**. They use the default `GITHUB_TOKEN` with `contents: write` — no extra secrets or PATs required.
-
----
-
-## Update detector (in-extension)
-
-GitHub release builds include a small feature that tells sideload users when a newer build is available, so they do not have to check GitHub manually.
-
-### Where it appears
-
-In the **settings popup** header (top-right): an amber **“Update available — X.X.X”** pill when an update exists, plus a muted line:
-
-> GitHub release build — do not upload to extension stores.
-
-Clicking the badge opens the relevant GitHub releases page.
-
-### How it checks for updates
-
-Implementation: [`src/utils/githubReleaseUpdate.ts`](../src/utils/githubReleaseUpdate.ts)
-
-**Stable channel** (from `release.yml` builds):
-
-1. Fetches releases from the GitHub API for `EthanJoyce-Dev/BetterSEQTA-lite`.
-2. Ignores the `nightly` tag and any non-semver tags.
-3. Finds the highest semver tag.
-4. Compares it to `browser.runtime.getManifest().version`.
-5. Shows the badge if the remote version is newer.
-
-**Nightly channel** (from `nightly.yml` builds):
-
-1. Fetches the `nightly` release.
-2. Compares its `published_at` timestamp to `lastSeenNightlyPublishedAt` in extension storage.
-3. On first install, records the current publish time without showing a badge.
-4. Shows **“Update available — nightly (YYYY-MM-DD)”** when a newer nightly has been published.
-
-Checks are throttled to once every **6 hours** per browser profile (`localStorage` key `bsplus_lastGhReleaseCheck`). Recent results are cached in memory for the session.
-
-### Dev override (testing)
-
-To test the badge without publishing a real release:
-
-1. Open settings and unlock **dev mode** (click the logo, type `dev`).
-2. In the developer section, set **GitHub latest version override** to a version higher than your installed one (e.g. `9.9.9`).
-3. Reopen settings — the badge should appear.
-
-This only applies when dev mode is on. Clear the field to return to normal API checks.
-
----
-
-## File reference
-
-| Path | Role |
-|------|------|
-| `.github/actions/build-extension/action.yml` | Shared install, build, zip |
-| `.github/workflows/release.yml` | Manual stable releases |
-| `.github/workflows/nightly.yml` | Nightly releases |
-| `.github/workflows/pr-ci.yml` | PR lint + build |
-| `.github/workflows/mvp.yml` | Push-to-main build artifact |
-| `.github/nightly-release-notes.md` | Static body for the `nightly` release |
-| `vite.config.ts` | Injects build-time `define` flags |
-| `src/env.d.ts` | TypeScript declarations for those flags |
-| `src/utils/githubReleaseUpdate.ts` | Update check logic |
-| `src/interface/pages/settings.svelte` | Badge and disclaimer UI |
-| `src/interface/pages/settings/general.svelte` | Dev override input |
-| `src/types/storage.ts` | `devGhReleaseVersionOverride`, `lastSeenNightlyPublishedAt` |
-
----
-
-## Quick reference
-
-### Publish a stable release
-
-```text
-1. Bump version in package.json on main
-2. Actions → Release → Run workflow → confirm version checkbox
-3. Edit release title/notes on GitHub (first time only)
-4. Re-run with same version to refresh zips without changing release text
-```
-
-### Get the latest nightly
-
-```text
-https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases/tag/nightly
-```
-
-### Verify a PR locally
-
-```bash
-npm run lint
-npm run build
-```
+- [`mvp.yml`](../.github/workflows/mvp.yml): builds on every push to `main`.
+- [`pr-ci.yml`](../.github/workflows/pr-ci.yml): lint, tests, build and smoke test on pull requests.
+- [`release.yml`](../.github/workflows/release.yml): publishes releases (above).

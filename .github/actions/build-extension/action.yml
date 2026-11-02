@@ -1,23 +1,5 @@
 name: Build Extension
-description: Install dependencies, build Chrome and Firefox extensions, and package zips.
-
-inputs:
-  gh_release_update_check:
-    description: Enable GitHub release update checker in the built extension.
-    required: false
-    default: "false"
-  update_channel:
-    description: Update channel baked into the build (stable or nightly).
-    required: false
-    default: stable
-  build_label:
-    description: Optional build label for nightly display (e.g. UTC build date).
-    required: false
-    default: ""
-  release_repo:
-    description: GitHub repo slug for the update checker (owner/name).
-    required: false
-    default: EthanJoyce-Dev/BetterSEQTA-lite
+description: Install dependencies, build the Chrome and Firefox extensions, and package them.
 
 outputs:
   version:
@@ -25,10 +7,10 @@ outputs:
     value: ${{ steps.version.outputs.version }}
   chrome_zip:
     description: Path to the Chrome extension zip
-    value: ${{ steps.zip.outputs.chrome_zip }}
-  firefox_zip:
-    description: Path to the Firefox extension zip
-    value: ${{ steps.zip.outputs.firefox_zip }}
+    value: ${{ steps.package.outputs.chrome_zip }}
+  firefox_xpi:
+    description: Path to the Firefox extension (.xpi)
+    value: ${{ steps.package.outputs.firefox_xpi }}
 
 runs:
   using: composite
@@ -49,27 +31,14 @@ runs:
 
     - name: Build extension
       shell: bash
-      env:
-        GH_RELEASE_UPDATE_CHECK: ${{ inputs.gh_release_update_check }}
-        UPDATE_CHANNEL: ${{ inputs.update_channel }}
-        GH_RELEASE_REPO: ${{ inputs.release_repo }}
-        BUILD_LABEL: ${{ inputs.build_label }}
       run: npm run build
 
-    - name: Package zips
-      id: zip
+    - name: Package builds
+      id: package
       shell: bash
-      env:
-        UPDATE_CHANNEL: ${{ inputs.update_channel }}
-        BUILD_LABEL: ${{ inputs.build_label }}
       run: |
-        VERSION="${{ steps.version.outputs.version }}"
-        if [ "$UPDATE_CHANNEL" = "nightly" ] && [ -n "$BUILD_LABEL" ]; then
-          BASE="betterseqta-plus-lite-nightly-${BUILD_LABEL}"
-        else
-          BASE="betterseqta-plus-lite-${VERSION}"
-        fi
-        (cd dist/chrome && zip -r "../${BASE}-chrome.zip" .)
-        (cd dist/firefox && zip -r "../${BASE}-firefox.zip" .)
+        BASE="betterseqta-plus-lite-${{ steps.version.outputs.version }}"
+        (cd dist/chrome && zip -qr "../${BASE}-chrome.zip" .)
+        (cd dist/firefox && zip -qr "../${BASE}.xpi" .)
         echo "chrome_zip=dist/${BASE}-chrome.zip" >> "$GITHUB_OUTPUT"
-        echo "firefox_zip=dist/${BASE}-firefox.zip" >> "$GITHUB_OUTPUT"
+        echo "firefox_xpi=dist/${BASE}.xpi" >> "$GITHUB_OUTPUT"

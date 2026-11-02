@@ -1,0 +1,13 @@
+{
+  "addons": {
+    "betterseqta@betterseqta.com": {
+      "updates": [
+        {
+          "version": "1.0.0",
+          "update_link": "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases/download/v1.0.0/betterseqta-plus-lite-1.0.0.xpi",
+          "update_hash": "sha256:7ccb495766b5a2681aecbeae856309e4af0e44151f4dc619cb372f083f042e83"
+        }
+      ]
+    }
+  }
+}

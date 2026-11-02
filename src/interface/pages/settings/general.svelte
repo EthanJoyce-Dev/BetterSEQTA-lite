@@ -12,6 +12,7 @@
   import PickerSwatch from "@/interface/components/PickerSwatch.svelte"
   import ConnectMobileApp from "@/interface/components/ConnectMobileApp.svelte"
   import GoogleCalendarSync from "@/interface/components/GoogleCalendarSync.svelte"
+  import UpdateCheck from "@/interface/components/UpdateCheck.svelte"
   import { getStoredOverride, setApiBase } from "@/seqta/utils/DevApiBase"
 
   let devApiBaseInput = $state<string>(getStoredOverride() ?? "")
@@ -415,6 +416,12 @@
     </div>
   </div>
 
+  <div class="border-none">
+    <div class="p-1 my-1 from-white to-zinc-100 bg-gradient-to-br rounded-xl border shadow-sm border-zinc-200/50 dark:border-zinc-700/40 dark:to-zinc-900/50 dark:from-zinc-900/40">
+      <UpdateCheck />
+    </div>
+  </div>
+
   <div class="p-1 border-none"></div>
 
   {@render Setting({
@@ -487,21 +494,6 @@
             <Button onClick={clearDevApiBase} text="Clear" />
           {/if}
         </div>
-      </div>
-      <div class="flex flex-col gap-2 px-4 py-3">
-        <div>
-          <h2 class="text-sm font-bold">GitHub latest version override</h2>
-          <p class="text-xs">Pretend a newer GitHub release exists to test the update badge. Only applies when dev mode is on.</p>
-        </div>
-        <input
-          type="text"
-          placeholder="e.g. 9.9.9"
-          value={$settingsState.devGhReleaseVersionOverride ?? ""}
-          oninput={(e) => {
-            settingsState.devGhReleaseVersionOverride = e.currentTarget.value;
-          }}
-          class="px-2 py-1 text-xs rounded border bg-white dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100"
-        />
       </div>
     </div>
   {/if}

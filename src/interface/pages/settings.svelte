@@ -16,13 +16,7 @@
   import FontPickerModal from "../components/FontPickerModal.svelte";
   import DisclaimerModal from "../components/DisclaimerModal.svelte";
   import { settingsPopup } from "../hooks/SettingsPopup";
-  import {
-    checkGithubReleaseUpdate,
-    dismissNightlyUpdate,
-    getInstalledGhReleaseChannelLabel,
-    isGhReleaseUpdateCheckEnabled,
-    type GhReleaseUpdateInfo,
-  } from "@/utils/githubReleaseUpdate";
+  import { checkForUpdate, installUpdate, type UpdateInfo } from "@/interface/utils/updater";
 
   let devModeSequence = "";
   let settingsActiveTab = $state(0);
@@ -30,18 +24,13 @@
   let disclaimerCallbacks = $state<{ onConfirm: () => void, onCancel: () => void } | null>(null);
   let disclaimerTitle = $state("Confirm");
   let disclaimerMessage = $state("");
-  const ghReleaseUpdateEnabled = isGhReleaseUpdateCheckEnabled();
-  const ghReleaseChannelLabel = getInstalledGhReleaseChannelLabel();
-  let ghReleaseUpdate = $state<GhReleaseUpdateInfo | null>(null);
+  let update = $state<UpdateInfo | null>(null);
+  let updateStarted = $state(false);
 
-  const openGhRelease = () => {
-    const url = ghReleaseUpdate?.url
-      ?? "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases";
-    if (ghReleaseUpdate?.available) {
-      dismissNightlyUpdate();
-    }
-    window.open(url, "_blank");
-    closeExtensionPopup();
+  const startUpdate = async () => {
+    if (!update || updateStarted) return;
+    updateStarted = update.autoInstall;
+    await installUpdate(update);
   };
 
   const handleDevModeToggle = () => {
@@ -105,11 +94,9 @@
       StandaloneStore.setStandalone(true);
     }
 
-    if (ghReleaseUpdateEnabled) {
-      void checkGithubReleaseUpdate().then((info) => {
-        ghReleaseUpdate = info;
-      });
-    }
+    void checkForUpdate().then((info) => {
+      update = info;
+    });
   });
 </script>
 
@@ -147,26 +134,15 @@
 
       {#if !standalone}
         <div class="flex absolute top-1 right-1 gap-1 items-start">
-          {#if ghReleaseUpdateEnabled}
-            <div class="flex flex-col items-end gap-0.5 max-w-[9rem] mr-0.5">
-              {#if ghReleaseUpdate?.available}
-                <button
-                  type="button"
-                  onclick={openGhRelease}
-                  class="px-1.5 py-0.5 text-[10px] font-semibold leading-tight text-white rounded-full bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500"
-                  title="Open GitHub release"
-                >
-                  Update available — {ghReleaseUpdate.label}
-                </button>
-              {/if}
-              <p class="text-[9px] leading-tight text-right text-zinc-500 dark:text-zinc-400">
-                {#if ghReleaseChannelLabel}
-                  {ghReleaseChannelLabel} — do not upload to extension stores.
-                {:else}
-                  GitHub release build — do not upload to extension stores.
-                {/if}
-              </p>
-            </div>
+          {#if update?.available}
+            <button
+              type="button"
+              onclick={startUpdate}
+              class="px-1.5 py-0.5 mt-1.5 mr-0.5 text-[10px] font-semibold leading-tight text-white rounded-full bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500"
+              title={update.autoInstall ? "Install the update now" : "Open the release to download it"}
+            >
+              {updateStarted ? "Installing…" : `Update to ${update.latest}`}
+            </button>
           {/if}
           <div class="flex gap-1 items-center">
           <button

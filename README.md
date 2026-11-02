@@ -13,6 +13,13 @@ Based on BetterSEQTA+ 3.7.2 (before the WebGL loading screens), with:
 
 Kept: themes and the theme store, dark mode, colours and fonts, the home page, Assessment Averages, timetable tweaks, room/teacher editing and notifications.
 
+## Installing
+
+Download the latest build from [Releases](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases/latest):
+
+- **Firefox / Zen:** `betterseqta-plus-lite-X.Y.Z.xpi`. Needs a browser that allows unsigned add-ons (`xpinstall.signatures.required = false` in `about:config`), then open the file or use "Install Add-on From File" in `about:addons`. It updates itself from then on.
+- **Chrome / Edge / Brave:** `betterseqta-plus-lite-X.Y.Z-chrome.zip`. Unzip it, then "Load unpacked" in `chrome://extensions` with Developer mode on.
+
 ## Building
 
 ```bash
@@ -32,11 +39,13 @@ Lite has its own [semver](https://semver.org) version numbers, starting at 1.0.0
 npm version patch
 ```
 
-Use `minor` for new features and `major` for breaking changes. This bumps `package.json`, commits, and tags `vX.Y.Z`. Add the notes to [CHANGELOG.md](CHANGELOG.md) (including which BetterSEQTA+ version it's based on), then push with tags:
+Use `minor` for new features and `major` for breaking changes. This bumps `package.json`, commits, and tags `vX.Y.Z`. Add the notes to [CHANGELOG.md](CHANGELOG.md) first (including which BetterSEQTA+ version it's based on), then push with tags:
 
 ```bash
 git push --follow-tags
 ```
+
+Pushing the tag publishes the release: GitHub Actions builds both browsers, attaches them to the [release](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases), and updates `updates.json`. Firefox/Zen installs then update themselves; Chrome shows an update button in settings. See [docs/RELEASES.md](docs/RELEASES.md).
 
 ## Credits
 
