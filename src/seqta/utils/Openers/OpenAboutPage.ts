@@ -1,4 +1,7 @@
+import browser from "webextension-polyfill";
 import stringToHTML from "../stringToHTML";
+import LogoForDark from "@/resources/icons/betterseqta-light-full.png";
+import LogoForLight from "@/resources/icons/betterseqta-dark-full.png";
 import { settingsState } from "../listeners/SettingsState";
 import { openPopup } from "./PopupManager";
 
@@ -13,19 +16,20 @@ export function OpenAboutPage() {
 
   const text = stringToHTML(/* html */ `
       <div class="whatsnewTextContainer" style="overflow-y: hidden;">
-        <img src="${settingsState.DarkMode ? "https://raw.githubusercontent.com/BetterSEQTA/BetterSEQTA-Plus/main/src/resources/branding/dark.jpg" : "https://raw.githubusercontent.com/BetterSEQTA/BetterSEQTA-Plus/main/src/resources/branding/light.jpg"}" class="aboutImg" />
+        <img src="${browser.runtime.getURL(settingsState.DarkMode ? LogoForDark : LogoForLight)}" class="aboutImg" style="aspect-ratio: auto; object-fit: contain; padding: 24px 16px;" />
         <p>BetterSEQTA+ Lite is a stripped-down build of BetterSEQTA+, the community fork of BetterSEQTA (originally developed by Nulkem). It keeps the themes and the home page, and drops the heavy extras so SEQTA loads faster.</p>
         <h1>Credits:</h1>
-        <p style="margin: 0;">
-  Nulkem created the original extension, was ported to Manifest V3 by MEGA-Dawg68, and is under active development by Crazypersonalph, SethBurkart123, and other contributors.
-</p>
+        <p style="margin: 0;">BetterSEQTA+ Lite is maintained by EthanJoyce-Dev.</p>
   <h1 style="text-align: left; font-weight: bold; margin: 0;">
-    All Contributors:
+    Legacy Credits:
   </h1>
+  <p style="margin: 0;">
+  Nulkem created the original BetterSEQTA, MEGA-Dawg68 ported it to Manifest V3, and Crazypersonalph, SethBurkart123 and other contributors developed BetterSEQTA+, which Lite is built on:
+  </p>
 <div style="max-width: 600px; margin: auto;">
   <img
     src="https://contrib.rocks/image?repo=BetterSEQTA/BetterSEQTA-Plus&columns=10"
-    style="width: 100%; max-width: 500px; height: auto; object-fit: contain; display: block; margin: -80px auto 0;">
+    style="width: 100%; max-width: 500px; height: auto; object-fit: contain; display: block; margin: 8px auto 0;">
 </div>
       </div>
     `).firstChild as HTMLElement;

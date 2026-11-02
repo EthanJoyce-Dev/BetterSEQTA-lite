@@ -1,6 +1,6 @@
 {
   "name": "betterseqta-plus-lite",
-  "version": "3.7.2",
+  "version": "1.0.0",
   "type": "module",
   "description": "Themes, dark mode and a better home page for SEQTA Learn, without the heavy extras.",
   "browserslist": "> 0.5%, last 2 versions, not dead",
@@ -20,7 +20,7 @@
     "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint \"src/**/*.{js,ts}\"",
     "test": "jest",
     "test:smoke": "node scripts/smoke-test.mjs",
-    "release": "gh release create $npm_package_version --repo EthanJoyce-Dev/BetterSEQTA-lite ./dist/*.zip --generate-notes",
+    "release": "gh release create v$npm_package_version --repo EthanJoyce-Dev/BetterSEQTA-lite ./dist/*.zip --generate-notes",
     "publish": "bun lib/publish.js --b",
     "zip": "bedframe zip"
   },
@@ -33,10 +33,15 @@
   },
   "keywords": [],
   "author": {
-    "name": "SethBurkart123",
-    "email": "betterseqta.plus@gmail.com",
-    "url": "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite"
+    "name": "EthanJoyce-Dev",
+    "url": "https://github.com/EthanJoyce-Dev"
   },
+  "contributors": [
+    { "name": "SethBurkart123", "url": "https://github.com/SethBurkart123" },
+    { "name": "Crazypersonalph", "url": "https://github.com/Crazypersonalph" },
+    { "name": "MEGA-Dawg68", "url": "https://github.com/MEGA-Dawg68" },
+    { "name": "Nulkem", "url": "https://github.com/Nulkem" }
+  ],
   "license": "MIT",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.26.9",
