@@ -66,6 +66,7 @@ export const PackageManagerEnum = {
  * @property {string} [browser_specific_settings.gecko.id] - The unique identifier for the extension in Firefox.
  * @property {string} [browser_specific_settings.gecko.strict_min_version] - The minimum version of Firefox the extension is compatible with.
  * @property {string} [browser_specific_settings.gecko.strict_max_version] - The maximum version of Firefox the extension is compatible with.
+ * @property {string} [browser_specific_settings.gecko.update_url] - Where Firefox checks for updates instead of AMO.
  */
 export type BrowserSpecificSettings = {
   browser_specific_settings?: {
@@ -73,6 +74,7 @@ export type BrowserSpecificSettings = {
       id: string;
       strict_min_version?: string;
       strict_max_version?: string;
+      update_url?: string;
     };
   };
 };
