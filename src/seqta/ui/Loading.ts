@@ -22,13 +22,12 @@ export default function loading() {
     <div class="bkloading" id="loading">
     <style>
       .bkloading {
-        transition: color 1ms linear, opacity 1s ease-in-out;
+        transition: opacity 150ms ease-out;
         background-color: rgb(229, 231, 235);
         color: black;
         width: 100%;
         overflow: hidden;
         opacity: 1;
-        transition: 1s;
         height: 100%;
         z-index: 1000000;
         position: absolute;

@@ -1,6 +1,6 @@
 // Third-party libraries
 import browser from "webextension-polyfill";
-import { animate, stagger } from "motion";
+import { animate } from "motion";
 
 // Internal utilities and functions
 import { GetThresholdOfColor } from "@/seqta/ui/colors/getThresholdColour";
@@ -96,7 +96,7 @@ export async function finishLoad() {
 
     const loadingbk = document.getElementById("loading");
     loadingbk?.classList.add("closeLoading");
-    await delay(501);
+    await delay(150);
     loadingbk?.remove();
   } catch (err) {
     console.error("Error during loading cleanup:", err);
@@ -236,33 +236,6 @@ async function LoadPageElements(): Promise<void> {
   );
 
   eventManager.register(
-    "dashboardAdded",
-    {
-      elementType: "div",
-      className: "dashboard",
-    },
-    handleDashboard,
-  );
-
-  eventManager.register(
-    "documentsAdded",
-    {
-      elementType: "div",
-      className: "documents",
-    },
-    handleDocuments,
-  );
-
-  eventManager.register(
-    "reportsAdded",
-    {
-      elementType: "div",
-      className: "reports",
-    },
-    handleReports,
-  );
-
-  eventManager.register(
     "timetableAdded",
     {
       elementType: "div",
@@ -273,39 +246,9 @@ async function LoadPageElements(): Promise<void> {
     },
   );
 
-  eventManager.register(
-    "noticesAdded",
-    {
-      elementType: "div",
-      className: "notice",
-    },
-    handleNotices,
-  );
-
   RegisterClickListeners();
 
   await handleSublink(sublink);
-}
-
-async function handleNotices(node: Element): Promise<void> {
-  if (!(node instanceof HTMLElement)) return;
-  if (!settingsState.animations) return;
-
-  node.style.opacity = "0";
-
-  // get index of node in relation to parent
-  const index = Array.from(node.parentElement!.children).indexOf(node);
-
-  animate(
-    node,
-    { opacity: [0, 1], y: [50, 0], scale: [0.99, 1] },
-    {
-      delay: 0.1 * index,
-      type: "spring",
-      stiffness: 250,
-      damping: 20,
-    },
-  );
 }
 
 async function handleSublink(sublink: string | undefined): Promise<void> {
@@ -340,10 +283,6 @@ async function handleSublink(sublink: string | undefined): Promise<void> {
         `${location.origin}/#?page=/${settingsState.defaultPage}`,
       );
       if (settingsState.defaultPage === "home") loadHomePage();
-      if (settingsState.defaultPage === "documents")
-        handleDocuments(document.querySelector(".documents")!);
-      if (settingsState.defaultPage === "reports")
-        handleReports(document.querySelector(".reports")!);
       if (settingsState.defaultPage === "messages")
         handleMessages(document.querySelector(".messages")!);
 
@@ -381,106 +320,6 @@ async function handleMessages(node: Element): Promise<void> {
   element.innerText = "Direct Messages";
   document.title = "Direct Messages ― SEQTA Learn";
   SortMessagePageItems(node);
-
-  if (!settingsState.animations) return;
-
-  // Hides messages on page load
-  const style = document.createElement("style");
-  style.classList.add("messageHider");
-  style.innerHTML = "[data-message]{opacity: 0 !important;}";
-  document.head.append(style);
-
-  await waitForElm("[data-message]", true, 10);
-  const messages = Array.from(
-    document.querySelectorAll("[data-message]"),
-  ).slice(0, 35);
-  animate(
-    messages,
-    { opacity: [0, 1], y: [10, 0] },
-    {
-      delay: stagger(0.03),
-      duration: 0.5,
-      ease: [0.22, 0.03, 0.26, 1],
-    },
-  );
-
-  document.head.querySelector("style.messageHider")?.remove();
-}
-
-async function handleDashboard(node: Element): Promise<void> {
-  if (!(node instanceof HTMLElement)) return;
-  if (!settingsState.animations) return;
-
-  const style = document.createElement("style");
-  style.classList.add("dashboardHider");
-  style.innerHTML = ".dashboard{opacity: 0 !important;}";
-  document.head.append(style);
-
-  await waitForElm(".dashlet", true, 10);
-  try {
-    const children = document.querySelectorAll(".dashboard > *");
-    if (children.length) {
-      animate(
-        children,
-        { opacity: [0, 1], y: [10, 0] },
-        {
-          delay: stagger(0.1),
-          duration: 0.5,
-          ease: [0.22, 0.03, 0.26, 1],
-        },
-      );
-    }
-  } catch {
-    // Avoid uncaught errors if motion hits an unexpected DOM state during load.
-  }
-
-  document.head.querySelector("style.dashboardHider")?.remove();
-}
-
-async function handleDocuments(node: Element): Promise<void> {
-  if (!(node instanceof HTMLElement)) return;
-  if (!settingsState.animations) return;
-
-  await waitForElm(".document", true, 10);
-  try {
-    const rows = document.querySelectorAll(".documents tbody tr.document");
-    if (rows.length) {
-      animate(
-        rows,
-        { opacity: [0, 1], y: [10, 0] },
-        {
-          delay: stagger(0.05),
-          duration: 0.5,
-          ease: [0.22, 0.03, 0.26, 1],
-        },
-      );
-    }
-  } catch {
-    // ignore
-  }
-}
-
-async function handleReports(node: Element): Promise<void> {
-  if (!(node instanceof HTMLElement)) return;
-  if (!settingsState.animations) return;
-
-  await waitForElm(".report", true, 10);
-  try {
-    const items = document.querySelectorAll(".reports .item");
-    if (items.length) {
-      animate(
-        items,
-        { opacity: [0, 1], y: [10, 0] },
-        {
-          delay: stagger(0.05, { startDelay: 0.2 }),
-          duration: 0.5,
-          ease: [0.22, 0.03, 0.26, 1],
-        },
-      );
-    }
-  } catch {
-    // ignore
-  }
 }
 
 function CheckNoticeTextColour(notice: any) {

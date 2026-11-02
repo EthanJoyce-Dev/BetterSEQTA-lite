@@ -1,4 +1,4 @@
-import { animate, stagger } from "motion";
+import { animate } from "motion";
 import browser from "webextension-polyfill";
 import LogoLight from "@/resources/icons/betterseqta-light-icon.png";
 import assessmentsicon from "@/seqta/icons/assessmentsIcon";
@@ -79,20 +79,6 @@ export async function loadHomePage() {
       </div>`);
 
   homeContainer.appendChild(skeletonStructure.firstChild!);
-
-  if (settingsState.animations) {
-    animate(
-      ".home-container > div",
-      { opacity: [0, 1], y: [10, 0], scale: [0.99, 1] },
-      {
-        delay: stagger(0.15, { startDelay: 0.1 }),
-        type: "spring",
-        stiffness: 341,
-        damping: 20,
-        mass: 1,
-      },
-    );
-  }
 
   const cleanup = setupTimetableListeners();
 

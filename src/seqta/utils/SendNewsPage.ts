@@ -4,7 +4,6 @@ import { delay } from "./delay";
 import { settingsState } from "./listeners/SettingsState";
 import browser from "webextension-polyfill";
 import LogoLightOutline from "@/resources/icons/betterseqta-light-outline.png";
-import { animate, stagger } from "motion";
 
 export async function SendNewsPage() {
   console.info("[BetterSEQTA+] Started Loading News Page");
@@ -112,20 +111,4 @@ export async function SendNewsPage() {
 
   // Single DOM update to append all articles
   newscontainer?.append(fragment);
-
-  if (!settingsState.animations) return;
-
-  const animatedArticles = Array.from(document.querySelectorAll(".NewsArticle"));
-
-  animate(
-    animatedArticles.slice(0, 20),
-    { opacity: [0, 1], y: [10, 0], scale: [0.99, 1] },
-    {
-      delay: stagger(0.1),
-      type: "spring",
-      stiffness: 341,
-      damping: 20,
-      mass: 1,
-    },
-  );
 }
