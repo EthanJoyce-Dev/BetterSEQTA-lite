@@ -1,5 +1,7 @@
 # BetterSEQTA+ Lite
 
+> **Disclaimer:** this is meant to be small, not convenient. It only exists because SEQTA at TES sucks and BetterSEQTA+ does too much. Don't expect extra features; if you want them, use [BetterSEQTA+](https://github.com/BetterSEQTA/BetterSEQTA-Plus).
+
 A lighter build of BetterSEQTA+ for [SEQTA Learn](https://educationhorizons.com/solutions/seqta/): the themes, dark mode and custom home page, without the extras that slowed page loads down.
 
 ## What's different
