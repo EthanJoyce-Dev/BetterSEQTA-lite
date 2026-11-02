@@ -26,7 +26,7 @@ import {
   updateEngageHomeMenuActive,
 } from "@/seqta/utils/Loaders/LoadEngageHomePage";
 import { loadHomePage } from "@/seqta/utils/Loaders/LoadHomePage";
-import { runStartupPopupQueue } from "@/seqta/utils/Openers/StartupPopupQueue";
+import { syncApiBaseToBackground } from "@/seqta/utils/DevApiBase";
 
 import { updateTimetableTimes } from "@/seqta/utils/updateTimetableTimes";
 
@@ -102,7 +102,8 @@ export async function finishLoad() {
     console.error("Error during loading cleanup:", err);
   }
 
-  void runStartupPopupQueue();
+  // Keeps a dev-mode API override in sync after service-worker restarts.
+  syncApiBaseToBackground();
 }
 
 export function GetCSSElement(file: string) {

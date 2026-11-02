@@ -14,9 +14,6 @@
   import CloudSettingsSync from "@/interface/components/CloudSettingsSync.svelte"
   import CloudHeader from "@/interface/components/store/CloudHeader.svelte"
   import { cloudAuth } from "@/seqta/utils/CloudAuth"
-  import { showPrivacyNotification } from "@/seqta/utils/Openers/OpenPrivacyNotification"
-  import { showThemeOfTheMonthPopupNow } from "@/seqta/utils/Openers/OpenThemeOfTheMonthPopup"
-  import { closeExtensionPopup } from "@/seqta/utils/Closers/closeExtensionPopup"
   import { getSnapshotForUpload } from "@/seqta/utils/cloudSettingsSync"
   import { getStoredOverride, setApiBase } from "@/seqta/utils/DevApiBase"
 
@@ -498,41 +495,6 @@
           <Switch 
             state={$settingsState.mockNotices ?? false} 
             onChange={(isOn: boolean) => settingsState.mockNotices = isOn} 
-          />
-        </div>
-      </div>
-      <div class="flex justify-between items-center px-4 py-3">
-        <div class="pr-4">
-          <h2 class="text-sm font-bold">Show Privacy Notification</h2>
-          <p class="text-xs">Show the privacy notification popup on next page load</p>
-        </div>
-        <div>
-          <Button
-            onClick={async () => {
-              settingsState.privacyStatementShown = false;
-              settingsState.privacyStatementLastUpdated = undefined;
-              closeExtensionPopup();
-              // Small delay to ensure popup is closed before showing notification
-              await new Promise(resolve => setTimeout(resolve, 100));
-              await showPrivacyNotification();
-            }}
-            text="Show Now"
-          />
-        </div>
-      </div>
-      <div class="flex justify-between items-center px-4 py-3">
-        <div class="pr-4">
-          <h2 class="text-sm font-bold">Show Theme of the Month</h2>
-          <p class="text-xs">Fetch and show the current month's popup now (ignores dismissed state)</p>
-        </div>
-        <div>
-          <Button
-            onClick={async () => {
-              closeExtensionPopup();
-              await new Promise((resolve) => setTimeout(resolve, 100));
-              await showThemeOfTheMonthPopupNow();
-            }}
-            text="Show Now"
           />
         </div>
       </div>
