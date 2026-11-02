@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isValidHotkey, parseHotkey } from '@/plugins/built-in/globalSearch/src/utils/hotkeyUtils';
+  import { isValidHotkey, parseHotkey } from '@/interface/utils/hotkeyUtils';
 
   let { value, onChange } = $props<{ 
     value: string, 

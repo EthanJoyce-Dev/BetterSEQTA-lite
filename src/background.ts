@@ -498,50 +498,6 @@ function SetStorageValue(object: any) {
   }
 }
 
-/** One-time migration for 3.6.5: opt upgraders into Global Search + indexing + transparency defaults. */
-const GLOBAL_SEARCH_PLUGIN_SETTINGS_KEY = "plugin.global-search.settings";
-const GLOBAL_SEARCH_MIGRATION_VERSION = "3.6.5";
-
-async function migrateGlobalSearchDefaultsFor365Upgrade(
-  previousVersion: string,
-): Promise<void> {
-  try {
-    const currRaw = browser.runtime.getManifest().version;
-    const prev = semver.coerce(previousVersion);
-    const curr = semver.coerce(currRaw);
-    if (
-      prev == null ||
-      curr == null ||
-      semver.lt(curr, GLOBAL_SEARCH_MIGRATION_VERSION) ||
-      !semver.lt(prev, GLOBAL_SEARCH_MIGRATION_VERSION)
-    ) {
-      return;
-    }
-
-    const got = await browser.storage.local.get(GLOBAL_SEARCH_PLUGIN_SETTINGS_KEY);
-    const existing = (got[GLOBAL_SEARCH_PLUGIN_SETTINGS_KEY] ?? {}) as Record<
-      string,
-      unknown
-    >;
-
-    await browser.storage.local.set({
-      [GLOBAL_SEARCH_PLUGIN_SETTINGS_KEY]: {
-        ...existing,
-        enabled: true,
-        transparencyEffects: true,
-        runIndexingOnLoad: true,
-        passiveIndexing: true,
-      },
-    });
-
-    console.info(
-      `[BetterSEQTA+] Migration ${GLOBAL_SEARCH_MIGRATION_VERSION}: Global Search and related settings enabled (from ${previousVersion}).`,
-    );
-  } catch (e) {
-    console.warn("[BetterSEQTA+] Global Search 3.6.5 settings migration failed:", e);
-  }
-}
-
 /** One-time reset for 3.6.6: re-enable Theme of the Month for existing users. */
 const THEME_OF_THE_MONTH_RESET_VERSION = "3.6.6";
 
@@ -623,7 +579,6 @@ browser.runtime.onInstalled.addListener(function (event) {
   }
 
   if (event.reason === "update" && event.previousVersion) {
-    void migrateGlobalSearchDefaultsFor365Upgrade(event.previousVersion);
     void resetThemeOfTheMonthDisabledFor366Upgrade(event.previousVersion);
     void resetThemeOfTheMonthDismissalFor370Upgrade(event.previousVersion);
   }

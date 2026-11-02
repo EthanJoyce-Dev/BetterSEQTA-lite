@@ -45,7 +45,6 @@
   }
 
   import { getAllPluginSettings } from "@/plugins"
-  import { isSeqtaEngageExperience } from "@/seqta/utils/isSeqtaEngage"
   import type { BooleanSetting, StringSetting, NumberSetting, SelectSetting, ButtonSetting, HotkeySetting, ComponentSetting } from "@/plugins/core/types"
 
   // Union type representing all possible settings
@@ -80,9 +79,7 @@
     settings: Record<string, SettingType>;
   }
 
-  const pluginSettings = getAllPluginSettings().filter(
-    (plugin) => !(isSeqtaEngageExperience() && plugin.pluginId === "global-search"),
-  ) as Plugin[];
+  const pluginSettings = getAllPluginSettings() as Plugin[];
   const pluginSettingsValues = $state<Record<string, Record<string, any>>>({});
 
   let cloudState = $state(cloudAuth.state);
@@ -434,18 +431,6 @@
           {/each}
         {/if}
       </div>
-      {#if plugin.pluginId === 'global-search'}
-        {@render Setting({
-          title: "Theme of the Month",
-          description: "Show the monthly featured theme popup when a new entry is available",
-          id: 15,
-          Component: Switch,
-          props: {
-            state: !($settingsState.themeOfTheMonthDisabled ?? false),
-            onChange: (isOn: boolean) => settingsState.themeOfTheMonthDisabled = !isOn
-          }
-        })}
-      {/if}
   </div>
   {/each}
 

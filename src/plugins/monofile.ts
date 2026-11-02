@@ -26,7 +26,6 @@ import {
   updateEngageHomeMenuActive,
 } from "@/seqta/utils/Loaders/LoadEngageHomePage";
 import { loadHomePage } from "@/seqta/utils/Loaders/LoadHomePage";
-import { loadAnalyticsPage } from "@/plugins/built-in/gradeAnalytics/loadAnalyticsPage";
 import { runStartupPopupQueue } from "@/seqta/utils/Openers/StartupPopupQueue";
 
 import { updateTimetableTimes } from "@/seqta/utils/updateTimetableTimes";
@@ -334,11 +333,6 @@ async function handleSublink(sublink: string | undefined): Promise<void> {
   switch (sublink) {
     case "news":
       await handleNewsPage();
-      break;
-    case "analytics":
-      console.info("[BetterSEQTA+] Started Init (Analytics)");
-      if (settingsState.onoff) void loadAnalyticsPage();
-      finishLoad();
       break;
     case undefined:
       window.location.replace(
