@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         ## Hi there! 👋
-        Welcome to BetterSEQTA+! We're excited to have you join our community.
+        Welcome to BetterSEQTA+ Lite! We're excited to have you join our community.
 
   - type: checkboxes
     attributes:

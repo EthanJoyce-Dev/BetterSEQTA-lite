@@ -635,7 +635,7 @@ export async function extractPDFText(url: string): Promise<string> {
 
     return text;
   } catch (error) {
-    console.error("[BetterSEQTA+] Failed to extract PDF text:", error);
+    console.error("[BetterSEQTA+ Lite] Failed to extract PDF text:", error);
     throw error;
   }
 }

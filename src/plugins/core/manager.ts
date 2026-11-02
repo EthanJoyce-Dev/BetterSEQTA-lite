@@ -187,7 +187,7 @@ export class PluginManager {
       await this.processBackloggedEvents(pluginId);
     } catch (error) {
       console.error(
-        `[BetterSEQTA+] Failed to start plugin ${pluginId}:`,
+        `[BetterSEQTA+ Lite] Failed to start plugin ${pluginId}:`,
         error,
       );
       throw error;

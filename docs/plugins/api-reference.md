@@ -2,7 +2,7 @@
 
 **Published version:** [docs.betterseqta.org/plugin-api/](https://docs.betterseqta.org/plugin-api/)
 
-This document provides detailed technical information about BetterSEQTA+'s plugin APIs. For a beginner-friendly introduction, see the [plugins section](https://docs.betterseqta.org/plugins/) at [docs.betterseqta.org](https://docs.betterseqta.org/).
+This document provides detailed technical information about BetterSEQTA+ Lite's plugin APIs. For a beginner-friendly introduction, see the [plugins section](https://docs.betterseqta.org/plugins/) at [docs.betterseqta.org](https://docs.betterseqta.org/).
 
 ## Plugin Structure
 

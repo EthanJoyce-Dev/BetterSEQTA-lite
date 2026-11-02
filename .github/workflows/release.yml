@@ -1,4 +1,4 @@
-# Manual release workflow only — runs on BetterSEQTA/BetterSEQTA-Plus via workflow_dispatch.
+# Manual release workflow only — runs on EthanJoyce-Dev/BetterSEQTA-lite via workflow_dispatch.
 # Bump package.json version on main, confirm when dispatching, then run.
 # Uses the default GITHUB_TOKEN (contents: write).
 

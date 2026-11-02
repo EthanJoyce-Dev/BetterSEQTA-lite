@@ -1,8 +1,8 @@
 {
-  "name": "betterseqtaplus",
+  "name": "betterseqta-plus-lite",
   "version": "3.7.2",
   "type": "module",
-  "description": "Enhance SEQTA Learn's usability and aesthetics! A fork of BetterSEQTA to continue development and add heaps more features!",
+  "description": "Themes, dark mode and a better home page for SEQTA Learn, without the heavy extras.",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "postinstall": "node scripts/copy-pdfjs-assets.mjs",
@@ -20,7 +20,7 @@
     "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint \"src/**/*.{js,ts}\"",
     "test": "jest",
     "test:smoke": "node scripts/smoke-test.mjs",
-    "release": "gh release create $npm_package_version --repo BetterSEQTA/BetterSEQTA-Plus ./dist/*.zip --generate-notes",
+    "release": "gh release create $npm_package_version --repo EthanJoyce-Dev/BetterSEQTA-lite ./dist/*.zip --generate-notes",
     "publish": "bun lib/publish.js --b",
     "zip": "bedframe zip"
   },
@@ -35,7 +35,7 @@
   "author": {
     "name": "SethBurkart123",
     "email": "betterseqta.plus@gmail.com",
-    "url": "https://github.com/BetterSEQTA/BetterSEQTA-Plus"
+    "url": "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite"
   },
   "license": "MIT",
   "devDependencies": {

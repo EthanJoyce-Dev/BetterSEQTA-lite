@@ -159,7 +159,7 @@ async function fetchWeekAndRender(): Promise<void> {
     engageWeekFrom = from;
     engageWeekUntil = until;
   } catch (e) {
-    console.error("[BetterSEQTA+] Engage parent timetable failed:", e);
+    console.error("[BetterSEQTA+ Lite] Engage parent timetable failed:", e);
     engageWeekItems = [];
     engageWeekFrom = from;
     engageWeekUntil = until;
@@ -627,7 +627,7 @@ async function fetchEngageNoticesFromApi(
 
     processEngageNotices(data, labelTokens);
   } catch (e) {
-    console.warn("[BetterSEQTA+] Engage notices request failed:", e);
+    console.warn("[BetterSEQTA+ Lite] Engage notices request failed:", e);
     processEngageNotices({ payload: [] }, labelTokens);
   }
 }
@@ -741,7 +741,7 @@ export async function loadEngageHomePage(): Promise<void> {
     main = (await waitForElm("#main", true, 100, 200)) as HTMLElement;
   } catch {
     console.warn(
-      "[BetterSEQTA+] Engage home: timed out waiting for #main (shell not ready).",
+      "[BetterSEQTA+ Lite] Engage home: timed out waiting for #main (shell not ready).",
     );
     return;
   }
@@ -789,7 +789,7 @@ export async function loadEngageHomePage(): Promise<void> {
     main.appendChild(engageHomeRoot);
   } else {
     console.error(
-      "[BetterSEQTA+] Engage home: parsed markup had no root element (check DOMPurify / stringToHTML).",
+      "[BetterSEQTA+ Lite] Engage home: parsed markup had no root element (check DOMPurify / stringToHTML).",
     );
     return;
   }
@@ -809,7 +809,7 @@ export async function loadEngageHomePage(): Promise<void> {
     try {
       children = await fetchEngageParentChildren();
     } catch (e) {
-      console.error("[BetterSEQTA+] Engage parent child list failed:", e);
+      console.error("[BetterSEQTA+ Lite] Engage parent child list failed:", e);
       showEngageTimetableError("Could not load students for this account.");
       return;
     }

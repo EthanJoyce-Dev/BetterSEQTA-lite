@@ -2,7 +2,7 @@
 
 **Published version:** [docs.betterseqta.org/theme-creation/](https://docs.betterseqta.org/theme-creation/)
 
-This guide covers everything you need to know about creating custom themes for BetterSEQTA+.
+This guide covers everything you need to know about creating custom themes for BetterSEQTA+ Lite.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This guide covers everything you need to know about creating custom themes for B
 
 ## Overview
 
-Themes in BetterSEQTA+ allow you to completely customize the appearance of SEQTA Learn. A theme consists of:
+Themes in BetterSEQTA+ Lite allow you to completely customize the appearance of SEQTA Learn. A theme consists of:
 
 - **Custom CSS**: CSS rules that override default styles
 - **Custom Images**: Images that can be referenced via CSS variables
@@ -28,7 +28,7 @@ Themes are applied by injecting CSS into the SEQTA page and setting CSS custom p
 
 ## CSS Variables
 
-BetterSEQTA+ provides a comprehensive set of CSS variables that you can use in your themes. These variables automatically adapt to light/dark mode and user preferences.
+BetterSEQTA+ Lite provides a comprehensive set of CSS variables that you can use in your themes. These variables automatically adapt to light/dark mode and user preferences.
 
 ### Core Background Variables
 
@@ -41,7 +41,7 @@ BetterSEQTA+ provides a comprehensive set of CSS variables that you can use in y
 | `--text-primary` | `black` | `white` | Primary text color |
 | `--text-color` | `black` | `white` | Text color (alias for text-primary) |
 
-### BetterSEQTA+ Specific Variables
+### BetterSEQTA+ Lite Specific Variables
 
 | Variable | Description | Notes |
 |----------|-------------|-------|
@@ -96,7 +96,7 @@ You can use these variables in your custom CSS:
 
 ## CSS Selectors & Classes
 
-BetterSEQTA+ uses specific CSS selectors and classes that you can target in your themes. Here are the most important ones:
+BetterSEQTA+ Lite uses specific CSS selectors and classes that you can target in your themes. Here are the most important ones:
 
 ### Main Layout Elements
 
@@ -151,11 +151,11 @@ html.transparencyEffects .notice {
 | `.upcoming-assessment` | Upcoming assessments |
 | `.entry.class` | Timetable entries |
 
-### BetterSEQTA+ Specific Classes
+### BetterSEQTA+ Lite Specific Classes
 
 | Class | Description |
 |-------|-------------|
-| `.addedButton` | BetterSEQTA+ added buttons |
+| `.addedButton` | BetterSEQTA+ Lite added buttons |
 | `.tooltip` | Tooltip elements |
 | `.notice-unified-content` | Unified notice content |
 | `.home-container` | Home page container |
@@ -568,20 +568,20 @@ Use pseudo-elements for decorative elements:
 
 ## Resources
 
-- **Theme Creator**: Access via BetterSEQTA+ settings
+- **Theme Creator**: Access via BetterSEQTA+ Lite settings
 - **CSS Variables Reference**: See [CSS Variables](#css-variables) section above
 - **SEQTA DOM Structure**: Inspect SEQTA pages in browser DevTools
-- **BetterSEQTA+ Source**: Check `src/css/injected.scss` for default styles
+- **BetterSEQTA+ Lite Source**: Check `src/css/injected.scss` for default styles
 
 ## Contributing Themes
 
 If you create a great theme, consider sharing it:
 
 1. Export your theme (Share button in theme creator)
-2. Submit to the BetterSEQTA+ theme store
+2. Submit to the BetterSEQTA+ Lite theme store
 3. Or share on GitHub/Discord
 
 ---
 
-**Note**: This documentation is based on BetterSEQTA+ v3.4.13. Some details may change in future versions.
+**Note**: This documentation is based on BetterSEQTA+ Lite v3.4.13. Some details may change in future versions.
 

@@ -1,8 +1,8 @@
-# Contributing to BetterSEQTA+
+# Contributing to BetterSEQTA+ Lite
 
 **Published version:** [docs.betterseqta.org/contributing/](https://docs.betterseqta.org/contributing/)
 
-Thank you for your interest in contributing to BetterSEQTA+! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to BetterSEQTA+ Lite! This document provides guidelines and instructions for contributing to the project.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ Thank you for your interest in contributing to BetterSEQTA+! This document provi
 
 ## Code of Conduct
 
-BetterSEQTA+ is committed to providing a welcoming and inclusive environment for all contributors. We expect all participants to adhere to our Code of Conduct, which promotes respectful and harassment-free interaction.
+BetterSEQTA+ Lite is committed to providing a welcoming and inclusive environment for all contributors. We expect all participants to adhere to our Code of Conduct, which promotes respectful and harassment-free interaction.
 
 Key points:
 
@@ -36,7 +36,7 @@ Key points:
 
 1. **Fork the Repository**
 
-   Start by forking the BetterSEQTA+ repository to your GitHub account.
+   Start by forking the BetterSEQTA+ Lite repository to your GitHub account.
 
 2. **Clone Your Fork**
 
@@ -148,16 +148,16 @@ See [RELEASES.md](RELEASES.md) for a full guide (workflows, sideload installs, a
 |----------|---------|---------|
 | `pr-ci.yml` | Every PR to `main` | Typecheck, lint, and build (no release) |
 | `mvp.yml` | Push to `main` | Build and upload `dist.zip` artifact |
-| `release.yml` | Manual (`workflow_dispatch`) | Stable release on [BetterSEQTA/BetterSEQTA-Plus](https://github.com/BetterSEQTA/BetterSEQTA-Plus) tagged with `package.json` version |
+| `release.yml` | Manual (`workflow_dispatch`) | Stable release on [EthanJoyce-Dev/BetterSEQTA-lite](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite) tagged with `package.json` version |
 | `nightly.yml` | Daily cron + manual | Updates the fixed `nightly` prerelease with latest `main` builds |
 
-**Releasing a stable version:** bump `version` in `package.json` on `main`, then manually run the **Release** workflow and confirm the version checkbox. Edit the release title and notes on GitHub after the first publish. Re-running for the same tag only updates the zip files. Assets are `betterseqtaplus-{version}-chrome.zip` and `-firefox.zip`.
+**Releasing a stable version:** bump `version` in `package.json` on `main`, then manually run the **Release** workflow and confirm the version checkbox. Edit the release title and notes on GitHub after the first publish. Re-running for the same tag only updates the zip files. Assets are `betterseqta-plus-lite-{version}-chrome.zip` and `-firefox.zip`.
 
 **Nightly builds** replace assets on the same `nightly` release. The release body warns that builds are experimental and must not be uploaded to extension stores.
 
 **GitHub release builds** include an in-extension update checker (settings header badge). **PR CI and local dev builds do not.**
 
-Release workflows are dispatched only on the main **BetterSEQTA/BetterSEQTA-Plus** repository and use the default `GITHUB_TOKEN`.
+Release workflows are dispatched only on the main **EthanJoyce-Dev/BetterSEQTA-lite** repository and use the default `GITHUB_TOKEN`.
 
 ### Coding Standards
 
@@ -266,7 +266,7 @@ Join our community channels to discuss the project, get help, and connect with o
 
 ## Creating Plugins
 
-If you're interested in creating plugins for BetterSEQTA+, check out our plugin development guides:
+If you're interested in creating plugins for BetterSEQTA+ Lite, check out our plugin development guides:
 
 - [Plugin development](https://docs.betterseqta.org/plugin-development/)
 - [Plugin API](https://docs.betterseqta.org/plugin-api/)
@@ -287,4 +287,4 @@ If you have any questions about contributing, please:
 2. Ask in the Discord server
 3. Open a GitHub Discussion
 
-Thank you for contributing to BetterSEQTA+! Your efforts help make SEQTA better for students and teachers everywhere.
+Thank you for contributing to BetterSEQTA+ Lite! Your efforts help make SEQTA better for students and teachers everywhere.

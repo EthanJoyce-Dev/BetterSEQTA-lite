@@ -2,7 +2,7 @@
 
 **Published version:** [docs.betterseqta.org/example-plugin/](https://docs.betterseqta.org/example-plugin/)
 
-This is a complete, working example of a simple BetterSEQTA+ plugin. You can copy this code and modify it to create your own plugin!
+This is a complete, working example of a simple BetterSEQTA+ Lite plugin. You can copy this code and modify it to create your own plugin!
 
 ## What This Example Does
 
@@ -243,7 +243,7 @@ pluginManager.registerPlugin(myFirstPlugin);
 2. Reload your extension in Chrome
 3. Visit a SEQTA page
 4. You should see your welcome message!
-5. Open BetterSEQTA+ settings to customize it
+5. Open BetterSEQTA+ Lite settings to customize it
 
 ## Key Concepts Explained
 

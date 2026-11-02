@@ -19,7 +19,7 @@ let currentSelectedDate = new Date();
 let loadingTimeout: any;
 
 export async function loadHomePage() {
-  console.info("[BetterSEQTA+] Started Loading Home Page");
+  console.info("[BetterSEQTA+ Lite] Started Loading Home Page");
 
   currentSelectedDate = new Date();
 
@@ -155,7 +155,7 @@ async function GetUpcomingAssessments() {
       .then((result) => result.json())
       .then((response) => response.payload);
   } catch (error) {
-    console.error("[BetterSEQTA+] Failed to get upcoming assessments:", error);
+    console.error("[BetterSEQTA+ Lite] Failed to get upcoming assessments:", error);
     return [];
   }
 }
@@ -217,7 +217,7 @@ async function GetActiveClasses() {
     );
     return (await response.json()).payload;
   } catch (error) {
-    console.error("[BetterSEQTA+] Failed to get active classes:", error);
+    console.error("[BetterSEQTA+ Lite] Failed to get active classes:", error);
     return [];
   }
 }
@@ -1090,7 +1090,7 @@ async function GetLessonColours() {
       .then((result) => result.json())
       .then((response) => response.payload);
   } catch (error) {
-    console.error("[BetterSEQTA+] Failed to get lesson colours:", error);
+    console.error("[BetterSEQTA+ Lite] Failed to get lesson colours:", error);
     return [];
   }
 }

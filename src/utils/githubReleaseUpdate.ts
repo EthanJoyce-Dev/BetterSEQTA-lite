@@ -22,7 +22,7 @@ function isUpdateCheckEnabled(): boolean {
 function getRepoSlug(): string {
   return typeof __GH_RELEASE_REPO__ !== "undefined"
     ? __GH_RELEASE_REPO__
-    : "BetterSEQTA/BetterSEQTA-Plus";
+    : "EthanJoyce-Dev/BetterSEQTA-lite";
 }
 
 function getUpdateChannel(): "stable" | "nightly" {

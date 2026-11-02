@@ -1,8 +1,8 @@
-# Installing BetterSEQTA+
+# Installing BetterSEQTA+ Lite
 
 **Published version:** [docs.betterseqta.org/install/](https://docs.betterseqta.org/install/)
 
-This guide will walk you through the process of installing and setting up BetterSEQTA+ for development or usage.
+This guide will walk you through the process of installing and setting up BetterSEQTA+ Lite for development or usage.
 
 ## Prerequisites
 
@@ -13,32 +13,32 @@ Before you begin, make sure you have the following installed:
 
 ## Installation Methods
 
-There are two ways to install BetterSEQTA+:
+There are two ways to install BetterSEQTA+ Lite:
 
 1. **For Users**: Install the browser extension
 2. **For Developers**: Clone the repository and set up the development environment
 
 ## For Users: Installing the Browser Extension
 
-BetterSEQTA+ is available as a browser extension for Chrome, Firefox, and Edge.
+BetterSEQTA+ Lite is available as a browser extension for Chrome, Firefox, and Edge.
 
 ### Chrome/Edge
 
-1. Visit the [Chrome Web Store page for BetterSEQTA+](https://chrome.google.com/webstore/detail/betterseqta)
+1. Visit the [Chrome Web Store page for BetterSEQTA+ Lite](https://chrome.google.com/webstore/detail/betterseqta)
 2. Click the "Add to Chrome" button
 3. Confirm the installation when prompted
 4. The extension will be installed and ready to use
 
 ### Firefox
 
-1. Visit the [Firefox Add-ons page for BetterSEQTA+](https://addons.mozilla.org/en-US/firefox/addon/betterseqta)
+1. Visit the [Firefox Add-ons page for BetterSEQTA+ Lite](https://addons.mozilla.org/en-US/firefox/addon/betterseqta)
 2. Click the "Add to Firefox" button
 3. Confirm the installation when prompted
 4. The extension will be installed and ready to use
 
 ## For Developers: Setting Up the Development Environment
 
-If you want to develop for BetterSEQTA+ or modify the code, follow these steps:
+If you want to develop for BetterSEQTA+ Lite or modify the code, follow these steps:
 
 ### 1. Clone the Repository
 
@@ -93,7 +93,7 @@ This will start a development server and build the extension in watch mode.
 
 1. Open Chrome/Edge and navigate to `chrome://extensions` or `edge://extensions`
 2. Enable "Developer mode" using the toggle in the top right
-3. Click "Load unpacked" and select the `dist` folder in your BetterSEQTA+ directory
+3. Click "Load unpacked" and select the `dist` folder in your BetterSEQTA+ Lite directory
 4. The extension should now appear in your extensions list
 
 #### Firefox
@@ -108,7 +108,7 @@ This will start a development server and build the extension in watch mode.
 After making changes to the code, the development server will automatically rebuild the extension. However, you may need to reload the extension in your browser to see the changes:
 
 1. Go to the extensions page in your browser
-2. Find BetterSEQTA+ and click the reload icon
+2. Find BetterSEQTA+ Lite and click the reload icon
 3. Refresh any SEQTA Learn pages you have open
 
 ## Troubleshooting Installation
@@ -149,7 +149,7 @@ Try:
 4. Rebuilding the extension
 5. Loading it again
 
-## Updating BetterSEQTA+
+## Updating BetterSEQTA+ Lite
 
 ### For Users
 
@@ -178,7 +178,7 @@ bun run dev
 
 ## Next Steps
 
-Now that you have BetterSEQTA+ installed, you can:
+Now that you have BetterSEQTA+ Lite installed, you can:
 
 - [Plugins](https://docs.betterseqta.org/plugins/)
 - [Contribute to the project](https://docs.betterseqta.org/contributing/) · [Repository CONTRIBUTING.md](../CONTRIBUTING.md)

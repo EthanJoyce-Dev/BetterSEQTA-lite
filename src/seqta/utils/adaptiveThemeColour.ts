@@ -51,7 +51,7 @@ async function getSubjectCode(
     }
     return null;
   } catch (error) {
-    console.warn("[BetterSEQTA+] Adaptive theme: failed to load subjects:", error);
+    console.warn("[BetterSEQTA+ Lite] Adaptive theme: failed to load subjects:", error);
     return null;
   }
 }
@@ -84,7 +84,7 @@ async function getSubjectColour(
     );
     return pref?.value ?? null;
   } catch (error) {
-    console.warn("[BetterSEQTA+] Adaptive theme: failed to load prefs:", error);
+    console.warn("[BetterSEQTA+ Lite] Adaptive theme: failed to load prefs:", error);
     return null;
   }
 }

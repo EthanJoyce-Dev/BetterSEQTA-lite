@@ -15,7 +15,7 @@ body:
     attributes:
       label: Bug report link
       description: "If this feature request is related to a bug report, please insert the link to the bug report here"
-      placeholder: "https://github.com/BetterSEQTA/BetterSEQTA-Plus/issues/..."
+      placeholder: "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/issues/..."
     validations:
       required: false
 
@@ -23,7 +23,7 @@ body:
     attributes:
       value: |
         ## Feature details
-        Before you request a feature, [please search](https://github.com/BetterSEQTA/BetterSEQTA-Plus/issues) if it has already been requested. (Make sure to check closed issues as well!)
+        Before you request a feature, [please search](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/issues) if it has already been requested. (Make sure to check closed issues as well!)
 
   - type: dropdown
     attributes:

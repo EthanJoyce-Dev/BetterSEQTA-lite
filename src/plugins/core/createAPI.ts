@@ -138,7 +138,7 @@ function createSettingsAPI<T extends PluginSettings>(
       }
     } catch (error) {
       console.error(
-        `[BetterSEQTA+] Error loading settings for plugin ${plugin.id}:`,
+        `[BetterSEQTA+ Lite] Error loading settings for plugin ${plugin.id}:`,
         error,
       );
     }
@@ -217,7 +217,7 @@ function createStorageAPI<T = any>(
       });
     } catch (error) {
       console.error(
-        `[BetterSEQTA+] Error loading storage for plugin ${pluginId}:`,
+        `[BetterSEQTA+ Lite] Error loading storage for plugin ${pluginId}:`,
         error,
       );
     }

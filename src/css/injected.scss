@@ -1296,7 +1296,8 @@ html.transparencyEffects
   background-size: auto 48px;
   height: 69.5px;
   content: "";
-  width: 184px;
+  /* Fits the logo with the LITE wordmark (4.3:1) at 48px tall. */
+  width: 212px;
 }
 .rightElements {
   display: flex;

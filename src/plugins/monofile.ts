@@ -52,7 +52,7 @@ async function HideMenuItems(): Promise<void> {
     )) {
       if (!toggle) {
         stylesheetInnerText += SetDisplayNone(menuItem);
-        console.info(`[BetterSEQTA+] Hiding ${menuItem} menu item`);
+        console.info(`[BetterSEQTA+ Lite] Hiding ${menuItem} menu item`);
       }
     }
 
@@ -60,7 +60,7 @@ async function HideMenuItems(): Promise<void> {
     menuItemStyle.innerText = stylesheetInnerText;
     document.head.appendChild(menuItemStyle);
   } catch (error) {
-    console.error("[BetterSEQTA+] An error occurred:", error);
+    console.error("[BetterSEQTA+ Lite] An error occurred:", error);
   }
 }
 
@@ -269,7 +269,7 @@ async function handleSublink(sublink: string | undefined): Promise<void> {
         break;
       case "home":
         window.location.replace(`${location.origin}/#?page=/home`);
-        console.info("[BetterSEQTA+] Started Init (SEQTA Engage home)");
+        console.info("[BetterSEQTA+ Lite] Started Init (SEQTA Engage home)");
         if (settingsState.onoff) void loadEngageHomePage();
         finishLoad();
         break;
@@ -296,7 +296,7 @@ async function handleSublink(sublink: string | undefined): Promise<void> {
       break;
     case "home":
       window.location.replace(`${location.origin}/#?page=/home`);
-      console.info("[BetterSEQTA+] Started Init");
+      console.info("[BetterSEQTA+ Lite] Started Init");
       if (settingsState.onoff) loadHomePage();
       finishLoad();
       break;
@@ -308,7 +308,7 @@ async function handleSublink(sublink: string | undefined): Promise<void> {
 }
 
 async function handleNewsPage(): Promise<void> {
-  console.info("[BetterSEQTA+] Started Init");
+  console.info("[BetterSEQTA+ Lite] Started Init");
   if (settingsState.onoff) {
     SendNewsPage();
     finishLoad();
@@ -393,7 +393,7 @@ function waitForEngageLoginOrContent(): Promise<"login" | "app" | "timeout"> {
       else if (document.getElementById("content")) resolve("app");
       else {
         console.warn(
-          "[BetterSEQTA+] Engage: timed out waiting for .login or #content; unblocking load UI.",
+          "[BetterSEQTA+ Lite] Engage: timed out waiting for .login or #content; unblocking load UI.",
         );
         resolve("timeout");
       }
@@ -477,11 +477,11 @@ export function showConflictPopup() {
   const textHTML = /* html */ `
     <div class="whatsnewTextContainer" style="overflow-y: auto; font-size: 1.3rem;">
       <p>
-        It appears that you have the legacy BetterSEQTA extension installed alongside BetterSEQTA+.
+        It appears that you have the legacy BetterSEQTA extension installed alongside BetterSEQTA+ Lite.
         This conflict may cause unexpected behavior. (and breaks the extension)
       </p>
       <p>
-        Please remove the older BetterSEQTA extension to ensure that BetterSEQTA+ works correctly.
+        Please remove the older BetterSEQTA extension to ensure that BetterSEQTA+ Lite works correctly.
       </p>
     </div>
   `;
@@ -519,7 +519,7 @@ export function init() {
   };
 
   if (settingsState.onoff) {
-    console.info("[BetterSEQTA+] Enabled");
+    console.info("[BetterSEQTA+ Lite] Enabled");
     if (settingsState.DarkMode) document.documentElement.classList.add("dark");
     if (settingsState.iconOnlySidebar) {
       if (document.body) {
@@ -632,7 +632,7 @@ export function init() {
 }
 
 function InjectCustomIcons() {
-  console.info("[BetterSEQTA+] Injecting Icons");
+  console.info("[BetterSEQTA+ Lite] Injecting Icons");
 
   const style = document.createElement("style");
   style.setAttribute("type", "text/css");
@@ -647,7 +647,7 @@ function InjectCustomIcons() {
 }
 
 export function AppendElementsToDisabledPage() {
-  console.info("[BetterSEQTA+] Appending elements to disabled page");
+  console.info("[BetterSEQTA+ Lite] Appending elements to disabled page");
   AddBetterSEQTAElements();
 
   let settingsStyle = document.createElement("style");

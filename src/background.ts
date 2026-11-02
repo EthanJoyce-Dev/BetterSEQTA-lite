@@ -178,14 +178,14 @@ const MESSAGE_HANDLERS: Record<string, MessageHandler> = {
     return true;
   },
   githubTab: () => {
-    void browser.tabs.create({ url: "github.com/BetterSEQTA/BetterSEQTA-Plus" });
+    void browser.tabs.create({ url: "github.com/EthanJoyce-Dev/BetterSEQTA-lite" });
   },
   setDefaultStorage: () => SetStorageValue(getDefaultValues()),
   ensureStorageDefaults: (_req, sendResponse) => {
     void ensureStorageDefaults()
       .then(() => sendResponse({ ok: true }))
       .catch((e) => {
-        console.warn("[BetterSEQTA+] ensureStorageDefaults failed:", e);
+        console.warn("[BetterSEQTA+ Lite] ensureStorageDefaults failed:", e);
         sendResponse({ ok: false });
       });
     return true;

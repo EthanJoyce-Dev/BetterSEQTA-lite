@@ -75,10 +75,10 @@ const notificationCollectorPlugin: Plugin<{}, NotificationCollectorStorage> = {
         if (alertDiv) {
           alertDiv.textContent = notificationCount.toString();
         } else {
-          console.info("[BetterSEQTA+] No notifications currently");
+          console.info("[BetterSEQTA+ Lite] No notifications currently");
         }
       } catch (error) {
-        console.error("[BetterSEQTA+] Error fetching notifications:", error);
+        console.error("[BetterSEQTA+ Lite] Error fetching notifications:", error);
         api.storage.consecutiveErrors =
           (api.storage.consecutiveErrors || 0) + 1;
       }

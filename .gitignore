@@ -14,7 +14,7 @@ src/public/resources/pdfjs/pdf.legacy.min.mjs
 extension.zip
 build/
 dist/
-betterseqtaplus-safari/
+betterseqta-plus-lite-safari/
 
 .million/
 .vscode/

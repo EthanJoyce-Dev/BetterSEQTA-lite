@@ -43,7 +43,7 @@ init();
 async function init() {
   if (!IsSEQTAPage) {
     IsSEQTAPage = true;
-    console.info("[BetterSEQTA+] Verified SEQTA Page");
+    console.info("[BetterSEQTA+ Lite] Verified SEQTA Page");
 
     registerFetchSeqtaAppLinkListener();
 
@@ -97,7 +97,7 @@ async function init() {
       }
 
       console.info(
-        "[BetterSEQTA+] Successfully initialised BetterSEQTA+, starting to load assets.",
+        "[BetterSEQTA+ Lite] Successfully initialised BetterSEQTA+ Lite, starting to load assets.",
       );
     } catch (error) {
       console.error(error);

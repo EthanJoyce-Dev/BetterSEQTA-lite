@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before reporting an issue, [please search](https://github.com/BetterSEQTA/BetterSEQTA-Plus/issues) to make sure it has not already been reported (make sure to search closed issues as well!).
+        Before reporting an issue, [please search](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/issues) to make sure it has not already been reported (make sure to search closed issues as well!).
 
   - type: textarea
     attributes:

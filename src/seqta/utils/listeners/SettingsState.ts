@@ -78,7 +78,7 @@ class StorageManager {
           await browser.runtime.sendMessage({ type: "ensureStorageDefaults" });
         } catch (e) {
           console.warn(
-            "[BetterSEQTA+] ensureStorageDefaults message failed:",
+            "[BetterSEQTA+ Lite] ensureStorageDefaults message failed:",
             e,
           );
         }

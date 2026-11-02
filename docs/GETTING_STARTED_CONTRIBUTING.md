@@ -2,7 +2,7 @@
 
 **Published version:** [docs.betterseqta.org/contributing/](https://docs.betterseqta.org/contributing/)
 
-Welcome to BetterSEQTA+! 🎉 This guide will walk you through making your first contribution, even if you're completely new to the project.
+Welcome to BetterSEQTA+ Lite! 🎉 This guide will walk you through making your first contribution, even if you're completely new to the project.
 
 ## Table of Contents
 
@@ -55,15 +55,15 @@ npm run dev
 2. Enable "Developer mode" (toggle in top right)
 3. Click "Load unpacked"
 4. Select the `dist` folder in your project
-5. Visit a SEQTA Learn page to see BetterSEQTA+ in action!
+5. Visit a SEQTA Learn page to see BetterSEQTA+ Lite in action!
 
 ### 5. Make a Tiny Change (5 minutes)
 Let's prove everything works:
 1. Open `src/SEQTA.ts`
-2. Find the line that says `"[BetterSEQTA+] Successfully initialised"`
-3. Change it to `"[BetterSEQTA+] Successfully initialised - Hello [YOUR_NAME]!"`
+2. Find the line that says `"[BetterSEQTA+ Lite] Successfully initialised"`
+3. Change it to `"[BetterSEQTA+ Lite] Successfully initialised - Hello [YOUR_NAME]!"`
 4. Save the file
-5. Go to `chrome://extensions`, click the refresh icon on BetterSEQTA+
+5. Go to `chrome://extensions`, click the refresh icon on BetterSEQTA+ Lite
 6. Refresh a SEQTA page and check the browser console (F12) - you should see your message!
 
 ### 6. Reset Your Change (3 minutes)
@@ -71,7 +71,7 @@ Let's prove everything works:
 git checkout -- src/SEQTA.ts
 ```
 
-**Congratulations! 🎉 You've successfully set up BetterSEQTA+ for development!**
+**Congratulations! 🎉 You've successfully set up BetterSEQTA+ Lite for development!**
 
 ## Making Your First Contribution
 

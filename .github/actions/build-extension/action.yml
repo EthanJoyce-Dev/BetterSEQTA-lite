@@ -17,7 +17,7 @@ inputs:
   release_repo:
     description: GitHub repo slug for the update checker (owner/name).
     required: false
-    default: BetterSEQTA/BetterSEQTA-Plus
+    default: EthanJoyce-Dev/BetterSEQTA-lite
 
 outputs:
   version:
@@ -65,9 +65,9 @@ runs:
       run: |
         VERSION="${{ steps.version.outputs.version }}"
         if [ "$UPDATE_CHANNEL" = "nightly" ] && [ -n "$BUILD_LABEL" ]; then
-          BASE="betterseqtaplus-nightly-${BUILD_LABEL}"
+          BASE="betterseqta-plus-lite-nightly-${BUILD_LABEL}"
         else
-          BASE="betterseqtaplus-${VERSION}"
+          BASE="betterseqta-plus-lite-${VERSION}"
         fi
         (cd dist/chrome && zip -r "../${BASE}-chrome.zip" .)
         (cd dist/firefox && zip -r "../${BASE}-firefox.zip" .)

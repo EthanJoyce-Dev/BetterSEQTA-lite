@@ -1,12 +1,12 @@
-# Creating Plugins for BetterSEQTA+
+# Creating Plugins for BetterSEQTA+ Lite
 
 **Published version:** [docs.betterseqta.org/plugins/](https://docs.betterseqta.org/plugins/) · [Plugin development](https://docs.betterseqta.org/plugin-development/) · [Plugin API](https://docs.betterseqta.org/plugin-api/)
 
-Hey there! 👋 So you want to create a plugin for BetterSEQTA+? That's awesome! This guide will walk you through everything you need to know, from the very basics to more advanced features. Don't worry if you're new to this - we'll explain everything step by step.
+Hey there! 👋 So you want to create a plugin for BetterSEQTA+ Lite? That's awesome! This guide will walk you through everything you need to know, from the very basics to more advanced features. Don't worry if you're new to this - we'll explain everything step by step.
 
 ## What is a Plugin?
 
-In BetterSEQTA+, a plugin is like a mini-app that adds new features to SEQTA. Think of it as a piece of LEGO that you can snap onto SEQTA to make it do new things. For example, you could create a plugin that:
+In BetterSEQTA+ Lite, a plugin is like a mini-app that adds new features to SEQTA. Think of it as a piece of LEGO that you can snap onto SEQTA to make it do new things. For example, you could create a plugin that:
 
 - Changes how SEQTA looks
 - Adds new buttons or features
@@ -28,7 +28,7 @@ const myFirstPlugin: Plugin = {
   description: "Adds a friendly message to SEQTA",
   version: "1.0.0",
 
-  // This tells BetterSEQTA+ that users can turn our plugin on/off
+  // This tells BetterSEQTA+ Lite that users can turn our plugin on/off
   disableToggle: true,
 
   // Optional: Mark your plugin as beta to show a "Beta" tag in settings

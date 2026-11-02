@@ -65,7 +65,7 @@ export default defineConfig(({ command }) => ({
       process.env.GH_RELEASE_UPDATE_CHECK === "true",
     ),
     __GH_RELEASE_REPO__: JSON.stringify(
-      process.env.GH_RELEASE_REPO ?? "BetterSEQTA/BetterSEQTA-Plus",
+      process.env.GH_RELEASE_REPO ?? "EthanJoyce-Dev/BetterSEQTA-lite",
     ),
     __UPDATE_CHANNEL__: JSON.stringify(process.env.UPDATE_CHANNEL ?? "stable"),
     __BUILD_LABEL__: JSON.stringify(process.env.BUILD_LABEL ?? ""),

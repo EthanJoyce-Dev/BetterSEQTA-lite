@@ -37,13 +37,13 @@ export function createLazyPlugin<T extends PluginSettings = PluginSettings, S = 
     beta: lazyPlugin.beta,
     
     run: async (api) => {
-      console.info(`[BetterSEQTA+] Dynamically loading plugin "${lazyPlugin.id}"...`);
+      console.info(`[BetterSEQTA+ Lite] Dynamically loading plugin "${lazyPlugin.id}"...`);
       
       try {
         // Dynamically import the actual plugin implementation
         const { default: actualPlugin } = await lazyPlugin.loader();
         
-        console.info(`[BetterSEQTA+] Successfully loaded plugin "${lazyPlugin.id}"`);
+        console.info(`[BetterSEQTA+ Lite] Successfully loaded plugin "${lazyPlugin.id}"`);
         
         // Execute the actual plugin's run function
         return await actualPlugin.run(api);
@@ -51,14 +51,14 @@ export function createLazyPlugin<T extends PluginSettings = PluginSettings, S = 
         // Handle Firefox MIME type errors gracefully
         if (error?.message?.includes("MIME type") || error?.message?.includes("NS_ERROR_CORRUPTED_CONTENT")) {
           console.error(
-            `[BetterSEQTA+] Failed to load plugin "${lazyPlugin.id}" due to Firefox module loading restrictions. ` +
+            `[BetterSEQTA+ Lite] Failed to load plugin "${lazyPlugin.id}" due to Firefox module loading restrictions. ` +
             `This may be a build configuration issue. Error:`,
             error
           );
           // Don't throw - allow the extension to continue functioning without this plugin
           return;
         }
-        console.error(`[BetterSEQTA+] Failed to dynamically load plugin "${lazyPlugin.id}":`, error);
+        console.error(`[BetterSEQTA+ Lite] Failed to dynamically load plugin "${lazyPlugin.id}":`, error);
         throw error;
       }
     }

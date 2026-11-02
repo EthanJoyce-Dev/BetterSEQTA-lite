@@ -1,4 +1,4 @@
-# BetterSEQTA+ Architecture
+# BetterSEQTA+ Lite Architecture
 
 **Published version:** [docs.betterseqta.org/architecture/](https://docs.betterseqta.org/architecture/)
 
@@ -16,12 +16,12 @@ Hey there! 👋 New to the codebase and feeling a bit lost? Don't worry - this g
 
 ## Overview
 
-BetterSEQTA+ is a browser extension that enhances SEQTA Learn by:
+BetterSEQTA+ Lite is a browser extension that enhances SEQTA Learn by:
 - Adding new features through a plugin system
 - Providing customizable themes and UI improvements
 - Offering better navigation and user experience
 
-Think of it like this: **SEQTA Learn + BetterSEQTA+ = Enhanced SEQTA Experience**
+Think of it like this: **SEQTA Learn + BetterSEQTA+ Lite = Enhanced SEQTA Experience**
 
 ## High-Level Architecture
 
@@ -75,12 +75,12 @@ Think of it like this: **SEQTA Learn + BetterSEQTA+ = Enhanced SEQTA Experience*
 This is where it all begins! When you visit a SEQTA page:
 1. Detects if you're on a SEQTA Learn page
 2. Injects our CSS styles
-3. Changes the favicon to BetterSEQTA+ icon
+3. Changes the favicon to BetterSEQTA+ Lite icon
 4. Loads settings from storage
 5. Initializes the plugin system
 
 ### 2. Plugin System (`src/plugins/`)
-The heart of BetterSEQTA+! This is what makes it extensible:
+The heart of BetterSEQTA+ Lite! This is what makes it extensible:
 - **Plugin Manager**: Registers and manages all plugins
 - **Built-in Plugins**: Pre-made plugins (themes, search, etc.)
 - **Plugin API**: Provides plugins with tools to interact with SEQTA
@@ -100,7 +100,7 @@ Runs in the background and handles:
 
 ## Plugin System
 
-Our plugin system is what makes BetterSEQTA+ so powerful. Here's how it works:
+Our plugin system is what makes BetterSEQTA+ Lite so powerful. Here's how it works:
 
 ### Plugin Lifecycle
 ```
@@ -205,8 +205,8 @@ console.log(settingsState.[the setting name])
 
 ### Debugging
 1. **Chrome DevTools**: Right-click → Inspect → Console tab
-2. **Extension Console**: `chrome://extensions` → BetterSEQTA+ → "Inspect views: background page"
-3. **Look for logs**: We log everything with `[BetterSEQTA+]` prefix
+2. **Extension Console**: `chrome://extensions` → BetterSEQTA+ Lite → "Inspect views: background page"
+3. **Look for logs**: We log everything with `[BetterSEQTA+ Lite]` prefix
 
 ### Making Changes
 1. Edit code → Save → Browser auto-reloads extension → Refresh SEQTA page

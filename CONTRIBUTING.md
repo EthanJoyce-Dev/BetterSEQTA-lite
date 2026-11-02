@@ -1,6 +1,6 @@
-# Contributing to BetterSEQTA+
+# Contributing to BetterSEQTA+ Lite
 
-Hey there! 👋 Thanks for your interest in contributing to BetterSEQTA+! We're excited to have you join our community of contributors.
+Hey there! 👋 Thanks for your interest in contributing to BetterSEQTA+ Lite! We're excited to have you join our community of contributors.
 
 ## 🚀 New Contributors Start Here!
 
@@ -31,7 +31,7 @@ Join our community channels to discuss the project, get help, and connect with o
 
 ## Creating Plugins
 
-If you're interested in creating plugins for BetterSEQTA+, check out our plugin development guides:
+If you're interested in creating plugins for BetterSEQTA+ Lite, check out our plugin development guides:
 
 - [Plugin development](https://docs.betterseqta.org/plugin-development/)
 - [Plugin API](https://docs.betterseqta.org/plugin-api/)
@@ -65,8 +65,8 @@ Please delete options that are not relevant.
 
 #### Create a new issue
 
-If you spot a problem with the readme or code, [search if an issue already exists](https://github.com/BetterSEQTA/BetterSEQTA-Plus/issues). If a related issue doesn't exist, you can open a new issue using a relevant [issue form](https://github.com/BetterSEQTA/BetterSEQTA-Plus/issues/new).
+If you spot a problem with the readme or code, [search if an issue already exists](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/issues). If a related issue doesn't exist, you can open a new issue using a relevant [issue form](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/issues/new).
 
 #### Solve an issue
 
-Scan through our [existing issues](https://github.com/BetterSEQTA/BetterSEQTA-Plus/issues) to find one that interests you. You can narrow down the search using `labels` as filters. As a general rule, we don’t assign issues to anyone. If you find an issue to work on, you are welcome to open a PR with a fix.
+Scan through our [existing issues](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/issues) to find one that interests you. You can narrow down the search using `labels` as filters. As a general rule, we don’t assign issues to anyone. If you find an issue to work on, you are welcome to open a PR with a fix.

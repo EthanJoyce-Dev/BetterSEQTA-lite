@@ -2,7 +2,7 @@
 
 **Published version:** [docs.betterseqta.org/troubleshooting/](https://docs.betterseqta.org/troubleshooting/)
 
-Having issues with BetterSEQTA+ development? This guide covers the most common problems and their solutions.
+Having issues with BetterSEQTA+ Lite development? This guide covers the most common problems and their solutions.
 
 ## Table of Contents
 
@@ -87,7 +87,7 @@ sudo chown -R $(whoami) /usr/local/lib/node_modules
 **Solutions**:
 1. **Reload the extension**:
    - Go to `chrome://extensions`
-   - Find BetterSEQTA+ and click the refresh icon
+   - Find BetterSEQTA+ Lite and click the refresh icon
    - Refresh your SEQTA page
 
 2. **Check if dev server is running**:
@@ -106,7 +106,7 @@ sudo chown -R $(whoami) /usr/local/lib/node_modules
 **Solutions**:
 1. **Check for errors**:
    - Go to `chrome://extensions`
-   - Click "Errors" button on BetterSEQTA+
+   - Click "Errors" button on BetterSEQTA+ Lite
    - Fix any JavaScript errors shown
 
 2. **Verify manifest**:
@@ -128,7 +128,7 @@ sudo chown -R $(whoami) /usr/local/lib/node_modules
 
 2. **Check browser console**:
    - Press `F12` → Console tab
-   - Look for "[BetterSEQTA+]" messages
+   - Look for "[BetterSEQTA+ Lite]" messages
    - If no messages, extension isn't running
 
 3. **Verify page detection**:
@@ -274,7 +274,7 @@ sudo chown -R $(whoami) /usr/local/lib/node_modules
 
 ### "Cannot access contents of the URL"
 - **Cause**: Extension permissions issue
-- **Fix**: Go to `chrome://extensions` → BetterSEQTA+ → Details → Site access → "On all sites"
+- **Fix**: Go to `chrome://extensions` → BetterSEQTA+ Lite → Details → Site access → "On all sites"
 
 ### "Extension context invalidated"
 - **Cause**: Extension was reloaded while page was open
@@ -332,7 +332,7 @@ console.log("[DEBUG] Plugin starting:", api);
 
 ### Check extension background page
 1. Go to `chrome://extensions`
-2. Click "Details" on BetterSEQTA+
+2. Click "Details" on BetterSEQTA+ Lite
 3. Click "Inspect views: background page"
 4. Check console for background script errors
 

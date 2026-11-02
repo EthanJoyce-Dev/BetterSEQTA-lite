@@ -6,7 +6,7 @@ import renderSvelte from "./main";
 import { initializeSettingsState } from "@/seqta/utils/listeners/SettingsState";
 
 function InjectCustomIcons() {
-  console.info("[BetterSEQTA+] Injecting Icons");
+  console.info("[BetterSEQTA+ Lite] Injecting Icons");
 
   const style = document.createElement("style");
   style.setAttribute("type", "text/css");

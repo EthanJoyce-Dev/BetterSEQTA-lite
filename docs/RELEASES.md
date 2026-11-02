@@ -1,8 +1,8 @@
 # GitHub releases, CI, and the update detector
 
-BetterSEQTA+ is distributed on the Chrome Web Store and Firefox Add-ons, but some users sideload builds from GitHub. This document explains how automated builds, releases, and the in-extension update badge work.
+BetterSEQTA+ Lite is distributed on the Chrome Web Store and Firefox Add-ons, but some users sideload builds from GitHub. This document explains how automated builds, releases, and the in-extension update badge work.
 
-All published releases target the upstream repository: **[BetterSEQTA/BetterSEQTA-Plus](https://github.com/BetterSEQTA/BetterSEQTA-Plus)**.
+All published releases target the upstream repository: **[EthanJoyce-Dev/BetterSEQTA-lite](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite)**.
 
 ---
 
@@ -21,7 +21,7 @@ flowchart TB
   end
 
   subgraph output [Outputs]
-    Zips["betterseqtaplus-VERSION-chrome.zip\nbetterseqtaplus-VERSION-firefox.zip"]
+    Zips["betterseqta-plus-lite-VERSION-chrome.zip\nbetterseqta-plus-lite-VERSION-firefox.zip"]
     GhStable["Release tag: 3.7.0"]
     GhNightly["Release tag: nightly"]
     Badge[Update badge in settings]
@@ -57,8 +57,8 @@ It:
 1. Installs dependencies (`npm install --legacy-peer-deps`)
 2. Runs `npm run build` (Chrome then Firefox via Vite)
 3. Zips each unpacked folder into sideload-ready archives:
-   - `dist/betterseqtaplus-{version}-chrome.zip`
-   - `dist/betterseqtaplus-{version}-firefox.zip`
+   - `dist/betterseqta-plus-lite-{version}-chrome.zip`
+   - `dist/betterseqta-plus-lite-{version}-firefox.zip`
 
 The `{version}` comes from `package.json`.
 
@@ -70,7 +70,7 @@ Release and nightly workflows pass environment variables into Vite, which bakes 
 |----------|----------------|---------|----------------|
 | `GH_RELEASE_UPDATE_CHECK` | `true` | `true` | `false` / unset |
 | `UPDATE_CHANNEL` | `stable` | `nightly` | `stable` (unused) |
-| `GH_RELEASE_REPO` | `BetterSEQTA/BetterSEQTA-Plus` | same | same |
+| `GH_RELEASE_REPO` | `EthanJoyce-Dev/BetterSEQTA-lite` | same | same |
 | `BUILD_LABEL` | empty | UTC build date (`YYYY-MM-DD`) | empty |
 
 When `GH_RELEASE_UPDATE_CHECK` is not `true`, the update-checker code is tree-shaken out of the bundle. PR CI builds and local `npm run build` do **not** include the update badge.
@@ -110,15 +110,15 @@ When dispatching, check **“I have already updated the version in package.json�
 3. Builds Chrome and Firefox with the update detector enabled (stable channel).
 4. If no release exists for that tag: creates one (e.g. `3.8.0`) with a placeholder description.
 5. If a release already exists for that tag: **only replaces the zip assets** (`--clobber`). Title and body are left unchanged.
-6. Uploads `betterseqtaplus-{version}-chrome.zip` and `-firefox.zip`.
+6. Uploads `betterseqta-plus-lite-{version}-chrome.zip` and `-firefox.zip`.
 
 On first publish, edit the **title** and **release notes** on GitHub afterward. Re-running for the same version refreshes the files only.
 
 ### Downloading and installing
 
-1. Open [github.com/BetterSEQTA/BetterSEQTA-Plus/releases](https://github.com/BetterSEQTA/BetterSEQTA-Plus/releases).
+1. Open [github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases).
 2. Pick the version you want.
-3. Download `betterseqtaplus-{version}-chrome.zip` or `-firefox.zip`.
+3. Download `betterseqta-plus-lite-{version}-chrome.zip` or `-firefox.zip`.
 4. Unzip and load the unpacked folder as a temporary extension (Chrome: Extensions → Load unpacked; Firefox: `about:debugging` → Load Temporary Add-on).
 
 **These GitHub builds are for sideloading only. Do not upload them to the Chrome Web Store or Firefox Add-ons.**
@@ -140,7 +140,7 @@ On first publish, edit the **title** and **release notes** on GitHub afterward. 
 2. Uses a fixed release tag: **`nightly`** (marked as prerelease).
 3. On first run: creates the `nightly` release with the text in [`.github/nightly-release-notes.md`](../.github/nightly-release-notes.md).
 4. On every run: sets the release title to **`Nightly (YYYY-MM-DD)`** (UTC build date) and **replaces** the zip assets on the same release (`--clobber`). The release body is not rewritten.
-5. Packages zips as `betterseqtaplus-nightly-{date}-chrome.zip` / `-firefox.zip`.
+5. Packages zips as `betterseqta-plus-lite-nightly-{date}-chrome.zip` / `-firefox.zip`.
 
 The nightly release body warns that builds are experimental and must not be uploaded to extension stores.
 
@@ -174,7 +174,7 @@ Uploads a `dist.zip` artifact containing the full `dist/` folder for debugging. 
 
 ## Authentication
 
-Release workflows run **only on [BetterSEQTA/BetterSEQTA-Plus](https://github.com/BetterSEQTA/BetterSEQTA-Plus)**. They use the default `GITHUB_TOKEN` with `contents: write` — no extra secrets or PATs required.
+Release workflows run **only on [EthanJoyce-Dev/BetterSEQTA-lite](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite)**. They use the default `GITHUB_TOKEN` with `contents: write` — no extra secrets or PATs required.
 
 ---
 
@@ -196,7 +196,7 @@ Implementation: [`src/utils/githubReleaseUpdate.ts`](../src/utils/githubReleaseU
 
 **Stable channel** (from `release.yml` builds):
 
-1. Fetches releases from the GitHub API for `BetterSEQTA/BetterSEQTA-Plus`.
+1. Fetches releases from the GitHub API for `EthanJoyce-Dev/BetterSEQTA-lite`.
 2. Ignores the `nightly` tag and any non-semver tags.
 3. Finds the highest semver tag.
 4. Compares it to `browser.runtime.getManifest().version`.
@@ -256,7 +256,7 @@ This only applies when dev mode is on. Clear the field to return to normal API c
 ### Get the latest nightly
 
 ```text
-https://github.com/BetterSEQTA/BetterSEQTA-Plus/releases/tag/nightly
+https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases/tag/nightly
 ```
 
 ### Verify a PR locally

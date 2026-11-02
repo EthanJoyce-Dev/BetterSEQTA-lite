@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Below here is the supported versions of BetterSEQTA+. Anything older than this is not supported and contains bugs.
+Below here is the supported versions of BetterSEQTA+ Lite. Anything older than this is not supported and contains bugs.
 
 | Version | Supported |
 | ------- | --------- |
@@ -13,4 +13,4 @@ Below here is the supported versions of BetterSEQTA+. Anything older than this i
 
 ## Reporting a Vulnerability
 
-If you find vulnerabilities, REPORT IT IMMEDIATELY. open the [advisories tab](https://github.com/BetterSEQTA/BetterSEQTA-Plus/security/advisories) on the left and click the green "report a vulnerability" button or use [this quick-link](https://github.com/BetterSEQTA/BetterSEQTA-Plus/security/advisories/new) to create a new report
+If you find vulnerabilities, REPORT IT IMMEDIATELY. open the [advisories tab](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/security/advisories) on the left and click the green "report a vulnerability" button or use [this quick-link](https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/security/advisories/new) to create a new report

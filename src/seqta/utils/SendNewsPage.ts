@@ -6,7 +6,7 @@ import browser from "webextension-polyfill";
 import LogoLightOutline from "@/resources/icons/betterseqta-light-outline.png";
 
 export async function SendNewsPage() {
-  console.info("[BetterSEQTA+] Started Loading News Page");
+  console.info("[BetterSEQTA+ Lite] Started Loading News Page");
   document.title = "News ― SEQTA Learn";
   await delay(10);
 

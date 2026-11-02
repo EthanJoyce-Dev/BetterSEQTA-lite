@@ -36,7 +36,7 @@
 
   const openGhRelease = () => {
     const url = ghReleaseUpdate?.url
-      ?? "https://github.com/BetterSEQTA/BetterSEQTA-Plus/releases";
+      ?? "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases";
     if (ghReleaseUpdate?.available) {
       dismissNightlyUpdate();
     }
@@ -70,7 +70,7 @@
   };
 
   const openChangelog = () => {
-    window.open("https://github.com/BetterSEQTA/BetterSEQTA-Plus/releases", "_blank");
+    window.open("https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/commits/main", "_blank");
     closeExtensionPopup();
   };
 

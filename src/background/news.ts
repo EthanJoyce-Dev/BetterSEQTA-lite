@@ -122,7 +122,7 @@ export async function fetchNews(source: string | undefined, sendResponse: any) {
   } else if (normalizedSource.startsWith("http")) {
     feeds = [normalizedSource];
   } else {
-    console.warn("[BetterSEQTA+] Invalid news source, falling back to Australia", normalizedSource);
+    console.warn("[BetterSEQTA+ Lite] Invalid news source, falling back to Australia", normalizedSource);
     return fetchNews("australia", sendResponse);
   }
 
