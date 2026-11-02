@@ -3,6 +3,15 @@
 BetterSEQTA+ Lite has its own version numbers ([semver](https://semver.org)), starting at 1.0.0.
 Each release notes which BetterSEQTA+ version it is based on.
 
+## 1.1.0
+
+Based on BetterSEQTA+ 3.7.2.
+
+- Updates from GitHub releases: Firefox/Zen installs new versions automatically
+- Settings > Updates shows your version, checks for a newer release and installs it
+  (on Chrome it opens the release to download)
+- Releases are built and published automatically from version tags
+
 ## 1.0.0
 
 Based on BetterSEQTA+ 3.7.2 (the last release before the WebGL loading screens).
