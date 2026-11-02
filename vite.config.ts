@@ -125,6 +125,9 @@ export default defineConfig(({ command }) => ({
     outDir: resolve(__dirname, "dist", mode),
     emptyOutDir: false,
     minify: true,
+    // Preload <link>s resolve against the host page in content scripts (404s on
+    // the SEQTA server), so let dynamic imports fetch their own deps instead.
+    modulePreload: false,
     //sourcemap: sourcemap,
     chunkSizeWarningLimit: 4000,
     rollupOptions: {
