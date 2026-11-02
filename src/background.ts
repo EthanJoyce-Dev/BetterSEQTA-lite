@@ -1,15 +1,9 @@
 import browser from "webextension-polyfill";
 import type { SettingsState } from "@/types/storage";
 import { getDefaultSettingsState } from "@/seqta/utils/defaultSettings";
-import { ensureSyncableStorageDefaults } from "@/seqta/utils/ensureSyncableStorageDefaults";
+import { ensureStorageDefaults } from "@/seqta/utils/ensureStorageDefaults";
 import { fetchNews } from "./background/news";
-import {
-  initCloudSettingsAutoSync,
-  performCloudSettingsDownloadWithRetry,
-  performCloudSettingsUploadWithRetry,
-  requestCloudSettingsDebouncedUpload,
-  runCloudSettingsPoll,
-} from "./background/cloudSettingsAutoSync";
+import { googleCalendarHandlers } from "./background/googleCalendar";
 
 /**
  * Session-only dev-mode override of the content API base.
@@ -77,13 +71,10 @@ function normalizeFetchThemesResponse(json: unknown): {
   return { success: true, data: { themes } };
 }
 
-function handleFetchThemes(request: any, sendResponse: MessageSender): boolean {
-  const { token } = request;
+function handleFetchThemes(_request: any, sendResponse: MessageSender): boolean {
   const apiUrl = `${apiBase()}/api/themes?type=betterseqta&limit=100&nocache=${Date.now()}`;
   const githubUrl = `https://raw.githubusercontent.com/BetterSEQTA/BetterSEQTA-Themes/main/store/themes.json?nocache=${Date.now()}`;
-  const headers: Record<string, string> = {};
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  fetch(apiUrl, { cache: "no-store", headers })
+  fetch(apiUrl, { cache: "no-store" })
     .then(async (r) => {
       const json = await r.json();
       if (!r.ok) {
@@ -115,14 +106,12 @@ function handleFetchThemes(request: any, sendResponse: MessageSender): boolean {
 }
 
 function handleFetchThemeDetails(request: any, sendResponse: MessageSender): boolean {
-  const { themeId, token } = request;
+  const { themeId } = request;
   if (!themeId || typeof themeId !== "string") {
     sendResponse({ success: false, error: "Missing themeId" });
     return false;
   }
-  const headers: Record<string, string> = {};
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  fetch(`${apiBase()}/api/themes/${themeId}`, { cache: "no-store", headers })
+  fetch(`${apiBase()}/api/themes/${themeId}`, { cache: "no-store" })
     .then((r) => r.json())
     .then(sendResponse)
     .catch((err) => {
@@ -144,219 +133,6 @@ function handleFetchFromUrl(request: any, sendResponse: MessageSender): boolean 
     .catch((err) => {
       console.error("[Background] fetchFromUrl error:", err);
       sendResponse({ error: err?.message });
-    });
-  return true;
-}
-
-async function parseJsonResponse(r: Response): Promise<any> {
-  const text = await r.text();
-  try {
-    return text ? JSON.parse(text) : {};
-  } catch {
-    return {};
-  }
-}
-
-function handleCloudReserveClient(request: any, sendResponse: MessageSender): boolean {
-  const redirect_uri = request.redirect_uri ?? "https://accounts.betterseqta.org/auth/bsplus/callback";
-  fetch("https://accounts.betterseqta.org/api/bsplus/client/reserve", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ redirect_uri }),
-  })
-    .then(async (r) => {
-      const data = await parseJsonResponse(r);
-      if (!r.ok) sendResponse({ error: data?.error ?? `Reserve failed (${r.status})` });
-      else sendResponse(data);
-    })
-    .catch((err) => {
-      console.error("[Background] cloudReserveClient error:", err);
-      sendResponse({ error: err?.message ?? "Network error" });
-    });
-  return true;
-}
-
-function handleCloudLogin(request: any, sendResponse: MessageSender): boolean {
-  const { client_id, redirect_uri, login, password } = request;
-  if (!client_id || !redirect_uri || !login || !password) {
-    sendResponse({ error: "Missing client_id, redirect_uri, login, or password" });
-    return false;
-  }
-  fetch("https://accounts.betterseqta.org/api/bsplus/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ client_id, redirect_uri, login, password }),
-  })
-    .then(async (r) => {
-      const data = await parseJsonResponse(r);
-      if (!r.ok) sendResponse({ error: data?.error ?? "Login failed" });
-      else sendResponse(data);
-    })
-    .catch((err) => {
-      console.error("[Background] cloudLogin error:", err);
-      sendResponse({ error: err?.message ?? "Network error" });
-    });
-  return true;
-}
-
-function handleCloudStartLogin(request: any, sendResponse: MessageSender): boolean {
-  const { client_id, redirect_uri } = request;
-  if (!client_id || !redirect_uri) {
-    sendResponse({ error: "Missing client_id or redirect_uri" });
-    return true;
-  }
-  const authorizeUrl = `https://accounts.betterseqta.org/login?redirect=${encodeURIComponent(`/oauth/authorize?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}`)}`;
-  browser.tabs.create({ url: authorizeUrl }).then(() => {
-    sendResponse({ success: true });
-  }).catch((err) => {
-    console.error("[Background] cloudStartLogin error:", err);
-    sendResponse({ error: err?.message ?? "Failed to open login page" });
-  });
-  return true;
-}
-
-const CALLBACK_URL_PREFIX = "https://accounts.betterseqta.org/auth/bsplus/callback";
-
-function initCloudLoginCallbackListener() {
-  browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.url && changeInfo.url.startsWith(CALLBACK_URL_PREFIX)) {
-      try {
-        const url = new URL(changeInfo.url);
-        const token = url.searchParams.get("token");
-        const refreshToken = url.searchParams.get("refresh_token");
-        const userId = url.searchParams.get("user_id");
-
-        if (token && refreshToken) {
-          // Store tokens
-          void (async () => {
-            try {
-              await browser.storage.local.set({
-                bsplus_token: token,
-                bsplus_refresh_token: refreshToken,
-              });
-
-              // Fetch full user info
-              const userRes = await fetch("https://accounts.betterseqta.org/api/auth/me", {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              if (userRes.ok) {
-                const user = await userRes.json();
-                await browser.storage.local.set({ bsplus_user: user });
-              } else if (userId) {
-                await browser.storage.local.set({ bsplus_user: { id: userId } });
-              }
-
-              // Trigger cloud settings download
-              void performCloudSettingsDownloadWithRetry(token).catch((err) => {
-                console.warn("[Background] Cloud settings download after login:", err);
-              });
-            } catch (err) {
-              console.error("[Background] Failed to process login callback:", err);
-            }
-          })();
-
-          // Close the callback tab
-          void browser.tabs.remove(tabId);
-        }
-      } catch (err) {
-        console.error("[Background] Error parsing callback URL:", err);
-      }
-    }
-  });
-}
-
-initCloudLoginCallbackListener();
-
-function handleCloudRefresh(request: any, sendResponse: MessageSender): boolean {
-  const { refresh_token, client_id } = request;
-  if (!refresh_token || !client_id) {
-    sendResponse({ error: "Missing refresh_token or client_id" });
-    return false;
-  }
-  fetch("https://accounts.betterseqta.org/api/bsplus/refresh", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token, client_id }),
-  })
-    .then(async (r) => {
-      const data = await parseJsonResponse(r);
-      if (!r.ok) sendResponse({ error: data?.error ?? "Refresh failed" });
-      else sendResponse(data);
-    })
-    .catch((err) => {
-      console.error("[Background] cloudRefresh error:", err);
-      sendResponse({ error: err?.message ?? "Network error" });
-    });
-  return true;
-}
-
-function handleCloudSettingsUpload(request: any, sendResponse: MessageSender): boolean {
-  void (async () => {
-    try {
-      const token = request.token as string | undefined;
-      if (!token) {
-        sendResponse({ success: false, error: "Not authenticated" });
-        return;
-      }
-      const res = await performCloudSettingsUploadWithRetry(token);
-      sendResponse({
-        success: res.success,
-        error: res.error,
-        updated_at: res.updated_at,
-      });
-    } catch (err) {
-      console.error("[Background] cloudSettingsUpload error:", err);
-      sendResponse({
-        success: false,
-        error: err instanceof Error ? err.message : "Upload failed",
-      });
-    }
-  })();
-  return true;
-}
-
-function handleCloudSettingsDownload(request: any, sendResponse: MessageSender): boolean {
-  void (async () => {
-    try {
-      const token = request.token as string | undefined;
-      if (!token) {
-        sendResponse({ success: false, error: "Not authenticated" });
-        return;
-      }
-      const res = await performCloudSettingsDownloadWithRetry(token);
-      sendResponse({
-        success: res.success,
-        notFound: res.notFound,
-        error: res.error,
-        updated_at: res.updated_at,
-      });
-    } catch (err) {
-      console.error("[Background] cloudSettingsDownload error:", err);
-      sendResponse({
-        success: false,
-        error: err instanceof Error ? err.message : "Download failed",
-      });
-    }
-  })();
-  return true;
-}
-
-function handleCloudFavorite(request: any, sendResponse: MessageSender): boolean {
-  const { themeId, token, action } = request;
-  if (!themeId || !token) {
-    sendResponse({ success: false, error: "Theme ID and token required" });
-    return false;
-  }
-  const isFavorite = action === "favorite";
-  fetch(`${apiBase()}/api/themes/${themeId}/favorite`, {
-    method: isFavorite ? "POST" : "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((r) => r.json())
-    .then(sendResponse)
-    .catch((err) => {
-      console.error("[Background] cloudFavorite error:", err);
-      sendResponse({ success: false, error: err?.message });
     });
   return true;
 }
@@ -406,7 +182,7 @@ const MESSAGE_HANDLERS: Record<string, MessageHandler> = {
   },
   setDefaultStorage: () => SetStorageValue(getDefaultValues()),
   ensureStorageDefaults: (_req, sendResponse) => {
-    void ensureSyncableStorageDefaults()
+    void ensureStorageDefaults()
       .then(() => sendResponse({ ok: true }))
       .catch((e) => {
         console.warn("[BetterSEQTA+] ensureStorageDefaults failed:", e);
@@ -421,21 +197,7 @@ const MESSAGE_HANDLERS: Record<string, MessageHandler> = {
   fetchThemes: handleFetchThemes,
   fetchThemeDetails: handleFetchThemeDetails,
   fetchFromUrl: handleFetchFromUrl,
-  cloudReserveClient: handleCloudReserveClient,
-  cloudLogin: handleCloudLogin,
-  cloudStartLogin: handleCloudStartLogin,
-  cloudRefresh: handleCloudRefresh,
-  cloudFavorite: handleCloudFavorite,
-  cloudSettingsUpload: handleCloudSettingsUpload,
-  cloudSettingsDownload: handleCloudSettingsDownload,
-  cloudSettingsPoll: () => {
-    void runCloudSettingsPoll();
-    return false;
-  },
-  cloudSettingsRequestDebouncedUpload: () => {
-    requestCloudSettingsDebouncedUpload();
-    return false;
-  },
+  ...googleCalendarHandlers,
   getSeqtaSession: (req: { baseUrl?: string }, sendResponse: MessageSender, sender?: browser.Runtime.MessageSender) => {
     (async () => {
       try {
@@ -501,12 +263,11 @@ browser.runtime.onInstalled.addListener(function () {
   browser.storage.local.remove(["justupdated"]);
   browser.storage.local.remove(["data"]);
 
-  void ensureSyncableStorageDefaults();
+  void ensureStorageDefaults();
 });
 
 browser.runtime.onStartup.addListener(() => {
-  void ensureSyncableStorageDefaults();
+  void ensureStorageDefaults();
 });
 
-initCloudSettingsAutoSync({ reloadSeqtaPages });
-void ensureSyncableStorageDefaults();
+void ensureStorageDefaults();

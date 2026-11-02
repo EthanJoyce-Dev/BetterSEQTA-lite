@@ -62,11 +62,7 @@ export function getDefaultSettingsState(): SettingsState {
     adaptiveThemeColour: false,
     adaptiveThemeGradient: false,
     adaptiveThemeColourTransition: true,
-    themeOfTheMonthDisabled: false,
-    autoCloudSettingsSync: true,
     selectedFont: "rubik",
     timeFormat: "24",
-    privacyStatementShown: false,
-    bsCloudAutoSyncAnnouncementShown: false,
   };
 }

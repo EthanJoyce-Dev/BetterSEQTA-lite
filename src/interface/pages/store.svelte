@@ -16,14 +16,9 @@
 
   import { loadBackground } from '@/seqta/ui/ImageBackgrounds'
   import Backgrounds from '../components/store/Backgrounds.svelte'
-  import { cloudAuth } from '@/seqta/utils/CloudAuth'
-  import SignInToFavoriteModal from '../components/SignInToFavoriteModal.svelte'
   import { consumePendingHighlightThemeId } from '@/seqta/utils/openThemeStoreWithHighlight'
 
   const themeManager = ThemeManager.getInstance();
-  let cloudLoggedIn = $state(cloudAuth.state.isLoggedIn);
-
-  cloudAuth.subscribe((s) => { cloudLoggedIn = s.isLoggedIn; });
 
   // State variables
   let searchTerm = $state('');
@@ -43,7 +38,6 @@
   let error = $state<string | null>(null);
   let fetchAttempt = $state(0);
   let selectedBackground = $state<string | null>(null);
-  let showSignInOverlay = $state(false);
 
   const MAX_FETCH_ATTEMPTS = 3;
   const FETCH_MESSAGE_TIMEOUT_MS = 25_000;
@@ -85,33 +79,6 @@
     return a.name.localeCompare(b.name);
   }
 
-  const toggleFavorite = async (theme: Theme) => {
-    const token = await cloudAuth.getStoredToken();
-    if (!token) return;
-    const isFavorite = !theme.is_favorited;
-    const result = (await browser.runtime.sendMessage({
-      type: 'cloudFavorite',
-      themeId: theme.id,
-      token,
-      action: isFavorite ? 'favorite' : 'unfavorite',
-    })) as { success?: boolean };
-    if (result?.success) {
-      const delta = isFavorite ? 1 : -1;
-      themes = themes.map((t) =>
-        t.id === theme.id
-          ? { ...t, is_favorited: isFavorite, favorite_count: Math.max(0, (t.favorite_count ?? 0) + delta) }
-          : t
-      );
-      if (displayTheme?.id === theme.id) {
-        displayTheme = {
-          ...displayTheme,
-          is_favorited: isFavorite,
-          favorite_count: Math.max(0, (displayTheme.favorite_count ?? 0) + delta),
-        };
-      }
-    }
-  };
-
   // Fetch themes via background script (avoids CORS when store runs inside SEQTA page)
   const fetchThemes = async (isRetry = false) => {
     if (!isRetry) {
@@ -119,14 +86,12 @@
       error = null;
     }
     try {
-      const token = await cloudAuth.getStoredToken();
       const data = await sendMessageWithTimeout<{
         success?: boolean;
         data?: { themes: unknown[] };
         error?: string;
       }>({
         type: 'fetchThemes',
-        token: token ?? undefined,
       });
       if (!data?.success || !Array.isArray(data?.data?.themes)) {
         throw new Error(data?.error || 'Failed to fetch themes');
@@ -211,7 +176,6 @@
     await themeManager.setTheme(themeId);
     themeUpdates.triggerUpdate();
     await fetchCurrentThemes();
-    void browser.runtime.sendMessage({ type: 'cloudSettingsRequestDebouncedUpload' }).catch(() => {});
   }
 
   async function removeThemeFromStore(themeId: string) {
@@ -228,17 +192,6 @@
   $effect(() => {
     if (error) {
       console.error(error);
-    }
-  });
-
-  // Refetch themes when user logs in (from another tab) to get is_favorited
-  let lastLoggedIn = $state(false);
-  $effect(() => {
-    if (cloudLoggedIn && !lastLoggedIn) {
-      lastLoggedIn = true;
-      fetchThemes();
-    } else if (!cloudLoggedIn) {
-      lastLoggedIn = false;
     }
   });
 </script>
@@ -287,11 +240,8 @@
             allStoreThemeRows={themes}
             {searchTerm}
             {setDisplayTheme}
-            {toggleFavorite}
-            isLoggedIn={cloudLoggedIn}
-            onRequestSignIn={() => (showSignInOverlay = true)}
           />
-    
+
           {#if displayTheme}
             <ThemeModal
               currentThemes={currentThemes}
@@ -300,9 +250,6 @@
               theme={displayTheme}
               {displayTheme}
               {setDisplayTheme}
-              {toggleFavorite}
-              isLoggedIn={cloudLoggedIn}
-              onRequestSignIn={() => (showSignInOverlay = true)}
               onInstall={async (themeId: string) => {
                 if (displayTheme) await installThemeFromStore(themeId, displayTheme);
               }}
@@ -318,8 +265,4 @@
       {/if}
     </div>
   </div>
-
-  {#if showSignInOverlay}
-    <SignInToFavoriteModal onClose={() => (showSignInOverlay = false)} />
-  {/if}
 </div>

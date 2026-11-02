@@ -11,10 +11,7 @@
   import { settingsState } from "@/seqta/utils/listeners/SettingsState.ts"
   import PickerSwatch from "@/interface/components/PickerSwatch.svelte"
   import ConnectMobileApp from "@/interface/components/ConnectMobileApp.svelte"
-  import CloudSettingsSync from "@/interface/components/CloudSettingsSync.svelte"
-  import CloudHeader from "@/interface/components/store/CloudHeader.svelte"
-  import { cloudAuth } from "@/seqta/utils/CloudAuth"
-  import { getSnapshotForUpload } from "@/seqta/utils/cloudSettingsSync"
+  import GoogleCalendarSync from "@/interface/components/GoogleCalendarSync.svelte"
   import { getStoredOverride, setApiBase } from "@/seqta/utils/DevApiBase"
 
   let devApiBaseInput = $state<string>(getStoredOverride() ?? "")
@@ -79,12 +76,6 @@
   const pluginSettings = getAllPluginSettings() as Plugin[];
   const pluginSettingsValues = $state<Record<string, Record<string, any>>>({});
 
-  let cloudState = $state(cloudAuth.state);
-  $effect(() => {
-    const unsub = cloudAuth.subscribe((s) => { cloudState = s; });
-    return unsub;
-  });
-  
   async function loadPluginSettings() {
     for (const plugin of pluginSettings) {
       if (Object.keys(plugin.settings).length === 0) continue;
@@ -126,25 +117,12 @@
     loadPluginSettings();
   })
 
-  const { showColourPicker, showFontPicker, showDisclaimer, showCloudPanel } = $props<{ 
+  const { showColourPicker, showFontPicker, showDisclaimer, standalone = false } = $props<{
     showColourPicker: () => void;
     showFontPicker: () => void;
     showDisclaimer: (onConfirm: () => void, onCancel: () => void, title?: string, message?: string) => void;
-    showCloudPanel: () => void;
+    standalone?: boolean;
   }>();
-
-  async function exportCloudSettingsJsonToFile() {
-    const payload = await getSnapshotForUpload();
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `betterseqta-plus-settings-export-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
 </script>
 
 {#snippet Setting({ title, description, Component, props }: SettingsList) }
@@ -367,8 +345,8 @@
   
         {#if !((plugin as any).disableToggle) || (pluginSettingsValues[plugin.pluginId]?.enabled ?? true)}
           {#each Object.entries(plugin.settings) as [key, setting]}
-            <!-- Skip the 'enabled' setting and hide cloud-only settings when not signed in -->
-            {#if key !== 'enabled' && !(key === 'useCloudPfp' && !cloudState.isLoggedIn)}
+            <!-- Skip the 'enabled' setting -->
+            {#if key !== 'enabled'}
               <div class="flex justify-between items-center px-4 py-3">
                 <div class="pr-4">
                   <h2 class="text-sm font-bold">{setting.title || key}</h2>
@@ -433,28 +411,15 @@
 
   <div class="border-none">
     <div class="p-1 my-1 from-white to-zinc-100 bg-gradient-to-br rounded-xl border shadow-sm border-zinc-200/50 dark:border-zinc-700/40 dark:to-zinc-900/50 dark:from-zinc-900/40">
-      <div class="flex justify-between items-center px-4 py-3">
-        <div class="pr-4">
-          <h2 class="text-sm font-bold">BetterSEQTA Cloud</h2>
-          <p class="text-xs">Account & sync</p>
-        </div>
-        <div>
-          <CloudHeader alwaysShowUserName onClick={showCloudPanel} />
-        </div>
-      </div>
-      {#if cloudState.isLoggedIn}
-        <div class="px-3 pb-3">
-          <CloudSettingsSync showDisclaimer={(onConfirm, onCancel) => showDisclaimer(onConfirm, onCancel, "Restore from cloud?", "This will replace your local settings with the cloud backup. Continue?")} />
-        </div>
-      {/if}
+      <GoogleCalendarSync {standalone} />
     </div>
   </div>
 
   <div class="p-1 border-none"></div>
 
   {@render Setting({
-    title: "BetterSEQTA+",
-    description: "Enables BetterSEQTA+ features",
+    title: "BetterSEQTA+ Lite",
+    description: "Enables BetterSEQTA+ Lite features",
     id: 12,
     Component: Switch,
     props: {
@@ -496,15 +461,6 @@
             state={$settingsState.mockNotices ?? false} 
             onChange={(isOn: boolean) => settingsState.mockNotices = isOn} 
           />
-        </div>
-      </div>
-      <div class="flex justify-between items-center px-4 py-3">
-        <div class="pr-4">
-          <h2 class="text-sm font-bold">Export cloud settings JSON</h2>
-          <p class="text-xs">Download the same payload as cloud sync (OAuth tokens stripped). For debugging and server testing.</p>
-        </div>
-        <div>
-          <Button onClick={exportCloudSettingsJsonToFile} text="Export to file" />
         </div>
       </div>
       <div class="flex flex-col gap-2 px-4 py-3">

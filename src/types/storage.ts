@@ -32,8 +32,6 @@ export interface SettingsState {
   justupdated?: boolean;
   privacyStatementShown?: boolean;
   privacyStatementLastUpdated?: string;
-  /** One-time announcement: BS Cloud automatic settings sync (last in startup popup queue). */
-  bsCloudAutoSyncAnnouncementShown?: boolean;
   /**
    * Calendar month (`YYYY-MM`) for which the user closed the Theme of the Month popup.
    * Cleared automatically when a new month's entry is fetched (different `month`).
@@ -69,13 +67,6 @@ export interface SettingsState {
   assessmentsAverage?: boolean;
   notificationCollector?: boolean;
 
-  // BetterSEQTA Cloud (accounts.betterseqta.org)
-  bsplus_client_id?: string;
-  bsplus_token?: string;
-  bsplus_refresh_token?: string;
-  bsplus_user?: { id: string; email?: string; username?: string; displayName?: string; pfpUrl?: string; pfpHash?: string | null; admin_level?: number };
-  /** When not `false`, automatic cloud settings sync is enabled (default-on). */
-  autoCloudSettingsSync?: boolean;
 }
 
 interface ToggleItem {

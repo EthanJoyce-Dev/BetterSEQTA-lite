@@ -27,6 +27,7 @@ import {
 } from "@/seqta/utils/Loaders/LoadEngageHomePage";
 import { loadHomePage } from "@/seqta/utils/Loaders/LoadHomePage";
 import { syncApiBaseToBackground } from "@/seqta/utils/DevApiBase";
+import { autoSyncGoogleCalendarIfDue } from "@/seqta/utils/googleCalendar/autoSync";
 
 import { updateTimetableTimes } from "@/seqta/utils/updateTimetableTimes";
 
@@ -249,6 +250,11 @@ async function LoadPageElements(): Promise<void> {
   RegisterClickListeners();
 
   await handleSublink(sublink);
+
+  // Runs after the page is up (and only when signed in), so it never delays loading.
+  void autoSyncGoogleCalendarIfDue().catch((err) =>
+    console.warn("[BetterSEQTA+ Lite] Calendar auto-sync failed:", err),
+  );
 }
 
 async function handleSublink(sublink: string | undefined): Promise<void> {

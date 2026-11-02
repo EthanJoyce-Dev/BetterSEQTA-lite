@@ -14,7 +14,6 @@
 
   import ColourPicker from "../components/ColourPicker.svelte";
   import FontPickerModal from "../components/FontPickerModal.svelte";
-  import CloudPanel from "../components/CloudPanel.svelte";
   import DisclaimerModal from "../components/DisclaimerModal.svelte";
   import { settingsPopup } from "../hooks/SettingsPopup";
   import {
@@ -88,11 +87,6 @@
   let { standalone } = $props<{ standalone?: boolean }>();
   let showColourPicker = $state<boolean>(false);
   let showFontPicker = $state<boolean>(false);
-  let showCloudPanel = $state<boolean>(false);
-
-  const openCloudPanel = () => {
-    showCloudPanel = true;
-  };
 
   const showDisclaimer = (onConfirm: () => void, onCancel: () => void, title?: string, message?: string) => {
     disclaimerCallbacks = { onConfirm, onCancel };
@@ -105,7 +99,6 @@
     settingsPopup.addListener(() => {
       showColourPicker = false;
       showFontPicker = false;
-      showCloudPanel = false;
     });
 
     if (standalone) {
@@ -208,7 +201,7 @@
         {
           title: "Settings",
           Content: Settings,
-          props: { showColourPicker: openColourPicker, showFontPicker: openFontPicker, showDisclaimer, showCloudPanel: openCloudPanel },
+          props: { showColourPicker: openColourPicker, showFontPicker: openFontPicker, showDisclaimer, standalone },
         },
         { title: "Shortcuts", Content: Shortcuts },
         { title: "Themes", Content: Theme },
@@ -220,14 +213,6 @@
     <ColourPicker
       hidePicker={() => {
         showColourPicker = false;
-      }}
-    />
-  {/if}
-
-  {#if showCloudPanel}
-    <CloudPanel
-      hidePanel={() => {
-        showCloudPanel = false;
       }}
     />
   {/if}

@@ -6,17 +6,11 @@
     themes,
     searchTerm,
     setDisplayTheme,
-    toggleFavorite,
-    isLoggedIn,
-    onRequestSignIn,
     allStoreThemeRows,
   } = $props<{
     themes: Theme[];
     searchTerm: string;
     setDisplayTheme: (theme: Theme) => void;
-    toggleFavorite: (theme: Theme) => void;
-    isLoggedIn: boolean;
-    onRequestSignIn?: () => void;
     /** Raw API list (includes `slave` rows) for master download aggregation */
     allStoreThemeRows?: Theme[];
   }>();
@@ -35,9 +29,6 @@
       <ThemeCard
         {theme}
         onClick={() => setDisplayTheme(theme)}
-        {toggleFavorite}
-        {isLoggedIn}
-        {onRequestSignIn}
         {allStoreThemeRows}
       />
     {/each}

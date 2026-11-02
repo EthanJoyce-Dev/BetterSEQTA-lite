@@ -6,11 +6,9 @@ import {
   type LoadedCustomTheme,
   shouldForceThemeAppearance,
 } from "@/types/CustomThemes";
-import { BSPLUS_PENDING_THEME_ENSURE_AFTER_CLOUD_KEY } from "@/seqta/utils/cloudSettingsSync";
 import { settingsState } from "@/seqta/utils/listeners/SettingsState";
 import debounce from "@/seqta/utils/debounce";
 import { themeUpdates } from "@/interface/hooks/ThemeUpdates";
-import { cloudAuth } from "@/seqta/utils/CloudAuth";
 import { getApiBase } from "@/seqta/utils/DevApiBase";
 import { updateAllColors } from "@/seqta/ui/colors/Manager";
 import {
@@ -177,33 +175,6 @@ export class ThemeManager {
       console.debug("[ThemeManager] Theme disabled successfully");
     } catch (error) {
       console.error("[ThemeManager] Error disabling theme:", error);
-    }
-  }
-
-  /**
-   * After cloud restore, IndexedDB/theme storage is only reachable from page context (not MV3 SW).
-   * Background sets BSPLUS_PENDING_THEME_ENSURE_AFTER_CLOUD_KEY; we fetch the store JSON here before setTheme().
-   * The resolved id matches cloud sync **`themeId` / `selectedTheme`**: it may be a standard theme uuid or a
-   * flavour (slave) variant id — **`downloadAndInstallStoreTheme`** is the same code path as the theme store installer.
-   */
-  public async prepareThemeAfterCloudSync(): Promise<void> {
-    try {
-      const snap = await browser.storage.local.get(BSPLUS_PENDING_THEME_ENSURE_AFTER_CLOUD_KEY);
-      const pending = snap[BSPLUS_PENDING_THEME_ENSURE_AFTER_CLOUD_KEY];
-      if (pending === undefined) return;
-
-      await browser.storage.local.remove(BSPLUS_PENDING_THEME_ENSURE_AFTER_CLOUD_KEY);
-
-      if (typeof pending !== "string") return;
-      const id = pending.trim();
-      if (!id) return;
-
-      const existing = (await localforage.getItem(id)) as CustomTheme | null;
-      if (existing) return;
-
-      await this.downloadAndInstallStoreTheme({ id, name: id });
-    } catch (e) {
-      console.warn("[ThemeManager] prepareThemeAfterCloudSync:", e);
     }
   }
 
@@ -796,10 +767,8 @@ export class ThemeManager {
     this.storeUpdateCheckRunning = true;
     localStorage.setItem(ThemeManager.STORE_CHECK_KEY, String(Date.now()));
     try {
-      const token = await cloudAuth.getStoredToken();
       const res = (await browser.runtime.sendMessage({
         type: "fetchThemes",
-        token: token ?? undefined,
       })) as {
         success?: boolean;
         data?: { themes?: Array<{ id: string; updated_at?: number }> };

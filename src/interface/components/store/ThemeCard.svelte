@@ -5,15 +5,11 @@
     gridCardPreviewImageUrls,
   } from '@/interface/utils/themeStoreFlavours'
   import { fade } from 'svelte/transition';
-  import { onMount } from 'svelte';
   import emblaCarouselSvelte from 'embla-carousel-svelte';
   import Autoplay from 'embla-carousel-autoplay';
-  let { theme, onClick, toggleFavorite, isLoggedIn, onRequestSignIn, allStoreThemeRows } = $props<{
+  let { theme, onClick, allStoreThemeRows } = $props<{
     theme: Theme;
     onClick: () => void;
-    toggleFavorite: (theme: Theme) => void;
-    isLoggedIn: boolean;
-    onRequestSignIn?: () => void;
     /** Raw API themes (includes hidden slaves) for aggregated master download totals */
     allStoreThemeRows?: Theme[];
   }>();
@@ -49,33 +45,6 @@
     ];
   });
 
-  let menuOpen = $state(false);
-  let menuRef: HTMLDivElement;
-
-  onMount(() => {
-    const closeMenu = (e: MouseEvent) => {
-      if (menuOpen && menuRef && !menuRef.contains(e.target as Node)) {
-        menuOpen = false;
-      }
-    };
-    document.addEventListener('click', closeMenu);
-    return () => document.removeEventListener('click', closeMenu);
-  });
-
-  function handleCardClick(e: MouseEvent) {
-    if ((e.target as HTMLElement).closest('[data-theme-menu]')) return;
-    onClick();
-  }
-
-  function handleFavoriteClick(e: MouseEvent) {
-    e.stopPropagation();
-    if (isLoggedIn) {
-      toggleFavorite(theme);
-    } else {
-      onRequestSignIn?.();
-    }
-    menuOpen = false;
-  }
 </script>
 
 <div
@@ -83,7 +52,7 @@
   role="button"
   tabindex="-1"
   onkeydown={onClick}
-  onclick={handleCardClick}
+  onclick={onClick}
 >
   <div
     class="bg-gray-50 w-full transition-all duration-500 ease-out relative group flex flex-col rounded-xl overflow-clip border hover:scale-105 hover:shadow-2xl dark:hover:shadow-white/[0.1] dark:hover:shadow-white/[0.8] dark:bg-zinc-800 dark:border-white/[0.1] h-auto"
@@ -102,45 +71,6 @@
         </span>
       </div>
     {/if}
-    <!-- Menu dropdown -->
-    <div class="absolute top-2 right-2 z-20" data-theme-menu bind:this={menuRef}>
-      <button
-        type="button"
-        class="flex justify-center items-center w-8 h-8 rounded-lg bg-black/40 hover:bg-black/60 text-white transition-all"
-        onclick={(e) => { e.stopPropagation(); menuOpen = !menuOpen; }}
-        aria-label="Theme options"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-          <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-        </svg>
-      </button>
-      {#if menuOpen}
-        <div
-          class="absolute right-0 top-full mt-1 py-1 min-w-[140px] rounded-lg bg-white dark:bg-zinc-800 shadow-lg border border-zinc-200 dark:border-zinc-700"
-          role="menu"
-        >
-          <button
-            type="button"
-            class="flex gap-2 items-center w-full px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700"
-            role="menuitem"
-            onclick={handleFavoriteClick}
-            title={isLoggedIn ? (theme.is_favorited ? 'Remove from favorites' : 'Add to favorites') : 'Sign in to favorite themes'}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill={theme.is_favorited ? 'currentColor' : 'none'}
-              stroke="currentColor"
-              stroke-width="2"
-              class="w-5 h-5 {theme.is_favorited ? 'text-red-500' : ''}"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            {theme.is_favorited ? 'Favorited' : 'Favorite'}
-          </button>
-        </div>
-      {/if}
-    </div>
     <div class="absolute bottom-1 left-3 right-3 z-10 mb-1 flex flex-col gap-0.5">
       <span class="text-xl font-bold text-white drop-shadow-md">{theme.name}</span>
       {#if theme.author}
