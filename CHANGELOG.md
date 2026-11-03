@@ -11,6 +11,7 @@ Based on BetterSEQTA+ 3.7.2, with fixes from 3.7.3–3.7.7.
 - Fixed home page notices sometimes not loading (on Learn and Engage)
 - Fixed upcoming assessments missing subjects when you have more than one active year
 - Fixed custom background images and videos not showing in settings
+- Fixed the timetable's edit (pencil) button not showing when you click a lesson
 - Fixed edited teacher names not showing on lessons that have an assessment
 - Fixed Enhanced Navigation arrows staying on screen after leaving a course
 - Assessment averages now count "Feedback Released" assessments

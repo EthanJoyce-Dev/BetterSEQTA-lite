@@ -807,6 +807,11 @@ ol:has([class*="MessageList__avatar___"] svg) {
 .quickbar .actions [title="Choose a colour"] > svg {
   scale: 0.9;
 }
+
+.quickbar .actions .timetable-edit-quickbar-btn > svg {
+  scale: 0.9;
+  padding-top: 1px;
+}
 .quickbar[data-yiq="light"] .actions {
   color: white !important;
 }
