@@ -4,6 +4,7 @@ import { delay } from "./delay";
 import { settingsState } from "./listeners/SettingsState";
 import browser from "webextension-polyfill";
 import LogoLightOutline from "@/resources/icons/betterseqta-light-outline.png";
+import { httpUrl, plainText } from "./newsFeedContent";
 
 export async function SendNewsPage() {
   console.info("[BetterSEQTA+ Lite] Started Loading News Page");
@@ -68,22 +69,25 @@ export async function SendNewsPage() {
   const fragment = document.createDocumentFragment();
 
   articles.forEach((article: any) => {
+    const link = httpUrl(article.url);
+    const imageUrl = httpUrl(article.urlToImage);
+
     const newsarticle = document.createElement("a");
     newsarticle.classList.add("NewsArticle");
-    newsarticle.href = article.url;
+    if (link) newsarticle.href = link;
     newsarticle.target = "_blank";
 
     const articleimage = document.createElement("div");
     articleimage.classList.add("articleimage");
 
-    if (article.urlToImage == "null" || article.urlToImage == null) {
+    if (!imageUrl) {
       articleimage.style.cssText = `
         background-image: url(${browser.runtime.getURL(LogoLightOutline)});
         width: 20%;
         margin: 0 7.5%;
       `;
     } else {
-      articleimage.style.backgroundImage = `url(${article.urlToImage})`;
+      articleimage.style.backgroundImage = `url("${imageUrl}")`;
     }
 
     const articletext = document.createElement("div");
@@ -91,15 +95,15 @@ export async function SendNewsPage() {
 
     const title = document.createElement("a");
     title.innerText = article.title;
-    title.href = article.url;
+    if (link) title.href = link;
     title.target = "_blank";
 
     const description = document.createElement("p");
-    const articleDescription = typeof article.description === "string"
-      ? article.description
-      : "No description available.";
+    const articleDescription =
+      (typeof article.description === "string" && plainText(article.description)) ||
+      "No description available.";
 
-    description.innerHTML =
+    description.textContent =
       articleDescription.length > 400
         ? articleDescription.substring(0, 400) + "..."
         : articleDescription;

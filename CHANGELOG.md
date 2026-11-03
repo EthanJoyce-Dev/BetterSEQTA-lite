@@ -3,6 +3,14 @@
 BetterSEQTA+ Lite has its own version numbers ([semver](https://semver.org)), starting at 1.0.0.
 Each release notes which BetterSEQTA+ version it is based on.
 
+## 1.2.1
+
+Based on BetterSEQTA+ 3.7.2.
+
+- Security: removed the API address override; a script on a SEQTA page could use it to point Lite's theme store at another server
+- Security: news descriptions show as plain text, and news links and images only accept http(s) URLs, so a bad RSS feed can't put HTML into SEQTA
+- Removed the "API Base URL" developer setting
+
 ## 1.2.0
 
 Based on BetterSEQTA+ 3.7.2.

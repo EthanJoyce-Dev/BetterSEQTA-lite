@@ -5,21 +5,7 @@ import { ensureStorageDefaults } from "@/seqta/utils/ensureStorageDefaults";
 import { fetchNews } from "./background/news";
 import { googleCalendarHandlers } from "./background/googleCalendar";
 import { updaterHandlers } from "./background/updater";
-
-/**
- * Session-only dev-mode override of the content API base.
- *
- * Stored in a module-level variable (not `chrome.storage`) so it is wiped
- * automatically when the browser/service-worker process restarts. Content
- * scripts re-sync this on every page load via `setDevApiBase` so the value
- * survives transient service-worker terminations within the same browser
- * session.
- */
-const DEFAULT_API_BASE = "https://betterseqta.org";
-let DEV_API_BASE: string | null = null;
-function apiBase(): string {
-  return DEV_API_BASE ?? DEFAULT_API_BASE;
-}
+import { getApiBase } from "@/seqta/utils/DevApiBase";
 
 function reloadSeqtaPages() {
   const result = browser.tabs.query({});
@@ -73,7 +59,7 @@ function normalizeFetchThemesResponse(json: unknown): {
 }
 
 function handleFetchThemes(_request: any, sendResponse: MessageSender): boolean {
-  const apiUrl = `${apiBase()}/api/themes?type=betterseqta&limit=100&nocache=${Date.now()}`;
+  const apiUrl = `${getApiBase()}/api/themes?type=betterseqta&limit=100&nocache=${Date.now()}`;
   const githubUrl = `https://raw.githubusercontent.com/BetterSEQTA/BetterSEQTA-Themes/main/store/themes.json?nocache=${Date.now()}`;
   fetch(apiUrl, { cache: "no-store" })
     .then(async (r) => {
@@ -112,7 +98,7 @@ function handleFetchThemeDetails(request: any, sendResponse: MessageSender): boo
     sendResponse({ success: false, error: "Missing themeId" });
     return false;
   }
-  fetch(`${apiBase()}/api/themes/${themeId}`, { cache: "no-store" })
+  fetch(`${getApiBase()}/api/themes/${themeId}`, { cache: "no-store" })
     .then((r) => r.json())
     .then(sendResponse)
     .catch((err) => {
@@ -152,19 +138,8 @@ function isSeqtaOrigin(origin: string): boolean {
   }
 }
 
-function handleSetDevApiBase(request: any): boolean {
-  const url = typeof request?.url === "string" ? request.url.trim() : null;
-  if (url && /^https?:\/\//.test(url)) {
-    DEV_API_BASE = url.replace(/\/$/, "");
-  } else {
-    DEV_API_BASE = null;
-  }
-  return false;
-}
-
 const MESSAGE_HANDLERS: Record<string, MessageHandler> = {
   reloadTabs: () => reloadSeqtaPages(),
-  setDevApiBase: handleSetDevApiBase,
   extensionPages: (req) => {
     browser.tabs.query({}).then((tabs) => {
       for (const tab of tabs) {

@@ -26,7 +26,6 @@ import {
   updateEngageHomeMenuActive,
 } from "@/seqta/utils/Loaders/LoadEngageHomePage";
 import { loadHomePage } from "@/seqta/utils/Loaders/LoadHomePage";
-import { syncApiBaseToBackground } from "@/seqta/utils/DevApiBase";
 import { autoSyncGoogleCalendarIfDue } from "@/seqta/utils/googleCalendar/autoSync";
 
 import { updateTimetableTimes } from "@/seqta/utils/updateTimetableTimes";
@@ -102,9 +101,6 @@ export async function finishLoad() {
   } catch (err) {
     console.error("Error during loading cleanup:", err);
   }
-
-  // Keeps a dev-mode API override in sync after service-worker restarts.
-  syncApiBaseToBackground();
 }
 
 export function GetCSSElement(file: string) {
