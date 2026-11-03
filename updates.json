@@ -3,9 +3,9 @@
     "betterseqta@betterseqta.com": {
       "updates": [
         {
-          "version": "1.2.0",
-          "update_link": "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases/download/v1.2.0/betterseqta-plus-lite-1.2.0.xpi",
-          "update_hash": "sha256:468854c1090452d432099439c2a15a9d981440d1b6a415036651f47a8d65c88f"
+          "version": "1.2.1",
+          "update_link": "https://github.com/EthanJoyce-Dev/BetterSEQTA-lite/releases/download/v1.2.1/betterseqta-plus-lite-1.2.1.xpi",
+          "update_hash": "sha256:de64009d0c2c61b38bdb260be78f4e733acc69180f853c71d9e8e8b605158e98"
         }
       ]
     }
