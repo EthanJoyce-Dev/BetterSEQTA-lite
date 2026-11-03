@@ -3,7 +3,7 @@
 BetterSEQTA+ Lite has its own version numbers ([semver](https://semver.org)), starting at 1.0.0.
 Each release notes which BetterSEQTA+ version it is based on.
 
-## Unreleased
+## 1.3.0
 
 Based on BetterSEQTA+ 3.7.2, with fixes from 3.7.3–3.7.7.
 

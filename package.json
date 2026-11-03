@@ -1,6 +1,6 @@
 {
   "name": "betterseqta-plus-lite",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "type": "module",
   "description": "Themes, dark mode and a better home page for SEQTA Learn, without the heavy extras.",
   "browserslist": "> 0.5%, last 2 versions, not dead",
