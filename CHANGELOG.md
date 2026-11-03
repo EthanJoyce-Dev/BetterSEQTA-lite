@@ -16,6 +16,8 @@ Based on BetterSEQTA+ 3.7.2, with fixes from 3.7.3–3.7.7.
 - Fixed Enhanced Navigation arrows staying on screen after leaving a course
 - Assessment averages now count "Feedback Released" assessments
 - Settings dropdowns have better contrast and work with the keyboard; SEQTA's own dropdowns are easier to read
+- Dev mode's Hide Personal Info swaps teacher and student names, rooms, your student ID and house for fake ones
+  that stay the same across pages, so screenshots are safe to share
 - Security: the theme store's background download only fetches from betterseqta.org and GitHub
 - Security: links passed into the assessment PDF reader are fully escaped
 

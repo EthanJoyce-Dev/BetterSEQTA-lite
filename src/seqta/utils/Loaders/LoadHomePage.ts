@@ -11,7 +11,7 @@ import stringToHTML from "../stringToHTML";
 import { renderShortcuts } from "@/seqta/utils/Render/renderShortcuts";
 import { CreateElement } from "@/seqta/utils/CreateEnable/CreateElement";
 import { FilterUpcomingAssessments } from "@/seqta/utils/FilterUpcomingAssessments";
-import { getMockNotices } from "@/seqta/ui/dev/hideSensitiveContent";
+import { getMockNotices } from "@/seqta/ui/dev/mockNotices";
 import { setupFixedTooltips } from "@/seqta/utils/fixedTooltip";
 import {
   activeSubjectsFromLearnPayload,

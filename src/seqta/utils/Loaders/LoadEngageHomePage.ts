@@ -7,7 +7,7 @@ import debounce from "@/seqta/utils/debounce";
 import { settingsState } from "@/seqta/utils/listeners/SettingsState";
 import stringToHTML from "@/seqta/utils/stringToHTML";
 import { waitForElm } from "@/seqta/utils/waitForElm";
-import { getMockNotices } from "@/seqta/ui/dev/hideSensitiveContent";
+import { getMockNotices } from "@/seqta/ui/dev/mockNotices";
 import { renderShortcuts } from "@/seqta/utils/Render/renderShortcuts";
 import {
   type EngageParentChild,

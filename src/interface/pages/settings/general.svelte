@@ -428,8 +428,8 @@
       </div>
       <div class="flex justify-between items-center px-4 py-3">
         <div class="pr-4">
-          <h2 class="text-sm font-bold">Sensitive Hider</h2>
-          <p class="text-xs">Replace sensitive content with mock data</p>
+          <h2 class="text-sm font-bold">Hide Personal Info</h2>
+          <p class="text-xs">Swaps teacher and student names, rooms, your student ID and house for fake ones, for screenshots. Turning it off reloads SEQTA.</p>
         </div>
         <div>
           <Switch

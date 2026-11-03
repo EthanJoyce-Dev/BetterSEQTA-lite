@@ -92,9 +92,8 @@ async function init() {
         await plugins.initializePlugins();
       }
 
-      if (settingsState.devMode) {
-        initializeHideSensitiveToggle();
-      }
+      // Watches dev mode's privacy screen switch; does nothing while it's off.
+      initializeHideSensitiveToggle();
 
       console.info(
         "[BetterSEQTA+ Lite] Successfully initialised BetterSEQTA+ Lite, starting to load assets.",
