@@ -13,6 +13,19 @@ import { CreateElement } from "@/seqta/utils/CreateEnable/CreateElement";
 import { FilterUpcomingAssessments } from "@/seqta/utils/FilterUpcomingAssessments";
 import { getMockNotices } from "@/seqta/ui/dev/hideSensitiveContent";
 import { setupFixedTooltips } from "@/seqta/utils/fixedTooltip";
+import {
+  activeSubjectsFromLearnPayload,
+  activeSubjectForAssessment,
+  filterAssessmentsForActiveSubjects,
+  subjectsWithUpcomingAssessments,
+  type ActiveSubject,
+} from "@/seqta/utils/activeSubjects";
+import {
+  noticeMatchesLabelFilter,
+  resolveNoticeFilterTokens,
+} from "@/seqta/utils/notices/noticeLabelFilters";
+
+type FilterSubject = ActiveSubject & { colour?: string; invert?: boolean };
 
 let LessonInterval: any;
 let currentSelectedDate = new Date();
@@ -98,12 +111,11 @@ export async function loadHomePage() {
 
   callHomeTimetable(TodayFormatted, true);
 
-  const activeClass = classes.find((c: any) => c.hasOwnProperty("active"));
-  const activeSubjects = activeClass?.subjects || [];
-  const activeSubjectCodes = activeSubjects.map((s: any) => s.code);
-  const currentAssessments = assessments
-    .filter((a: any) => activeSubjectCodes.includes(a.code))
-    .sort(comparedate);
+  const activeSubjects = activeSubjectsFromLearnPayload(classes);
+  const currentAssessments = filterAssessmentsForActiveSubjects(
+    assessments,
+    activeSubjects,
+  ).sort(comparedate);
 
   const upcomingItems = document.getElementById("upcoming-items");
   if (upcomingItems) {
@@ -111,33 +123,20 @@ export async function loadHomePage() {
     upcomingItems.classList.remove("loading");
   }
 
-  const labelArray = prefs.payload
-    .filter((item: any) => item.name === "notices.filters")
-    .map((item: any) => item.value);
+  const labelTokens = await resolveNoticeFilterTokens(
+    prefs.payload,
+    `${location.origin}/seqta/student/load/notices?`,
+  );
 
   const noticeContainer = document.getElementById("notice-container");
   if (noticeContainer) {
-    if (labelArray.length > 0) {
-      const dateControl = document.querySelector(
-        'input[type="date"]',
-      ) as HTMLInputElement;
-      if (dateControl) {
-        dateControl.value = TodayFormatted;
-        setupNotices(labelArray[0].split(" "), TodayFormatted);
-      }
-      noticeContainer.classList.remove("loading");
-    } else {
-      noticeContainer.classList.remove("loading");
-      noticeContainer.innerHTML = "";
-      const emptyState = document.createElement("div");
-      emptyState.classList.add("day-empty");
-      const img = document.createElement("img");
-      img.src = browser.runtime.getURL(LogoLight);
-      const text = document.createElement("p");
-      text.innerText = "No notices available.";
-      emptyState.append(img, text);
-      noticeContainer.append(emptyState);
+    const dateControl = document.querySelector(
+      'input[type="date"]',
+    ) as HTMLInputElement;
+    if (dateControl) {
+      dateControl.value = TodayFormatted;
     }
+    setupNotices(labelTokens, TodayFormatted);
   }
 
   return cleanup;
@@ -228,6 +227,12 @@ function setupNotices(labelArray: string[], date: string) {
   ) as HTMLInputElement;
 
   const fetchNotices = async (date: string) => {
+    const container = document.getElementById("notice-container");
+    if (container) {
+      container.classList.add("loading");
+      container.innerHTML = "";
+    }
+
     try {
       const data = settingsState.mockNotices
         ? getMockNotices()
@@ -235,13 +240,13 @@ function setupNotices(labelArray: string[], date: string) {
             await fetch(`${location.origin}/seqta/student/load/notices?`, {
               method: "POST",
               headers: { "Content-Type": "application/json; charset=utf-8" },
+              credentials: "include",
               body: JSON.stringify({ date }),
             })
           ).json();
 
       processNotices(data, labelArray);
     } catch {
-      // Notices failed to load; processNotices will show empty state if container exists
       processNotices({ payload: [] }, labelArray);
     }
   };
@@ -274,30 +279,17 @@ function processNotices(response: any, labelArray: string[]) {
   const NoticeContainer = document.getElementById("notice-container");
   if (!NoticeContainer) return;
 
+  NoticeContainer.classList.remove("loading");
   NoticeContainer.innerHTML = "";
 
   const notices = response?.payload;
   if (!Array.isArray(notices)) {
-    const emptyState = document.createElement("div");
-    emptyState.classList.add("day-empty");
-    const img = document.createElement("img");
-    img.src = browser.runtime.getURL(LogoLight);
-    const text = document.createElement("p");
-    text.innerText = "No notices for today.";
-    emptyState.append(img, text);
-    NoticeContainer.append(emptyState);
+    appendNoticeEmptyState(NoticeContainer, "No notices for today.");
     return;
   }
 
   if (!notices.length) {
-    const emptyState = document.createElement("div");
-    emptyState.classList.add("day-empty");
-    const img = document.createElement("img");
-    img.src = browser.runtime.getURL(LogoLight);
-    const text = document.createElement("p");
-    text.innerText = "No notices for today.";
-    emptyState.append(img, text);
-    NoticeContainer.append(emptyState);
+    appendNoticeEmptyState(NoticeContainer, "No notices for today.");
     return;
   }
 
@@ -305,8 +297,7 @@ function processNotices(response: any, labelArray: string[]) {
 
   notices.forEach((notice: any) => {
     const shouldInclude =
-      settingsState.mockNotices ||
-      labelArray.includes(JSON.stringify(notice.label));
+      settingsState.mockNotices || noticeMatchesLabelFilter(notice, labelArray);
 
     if (shouldInclude) {
       const colour = processNoticeColor(notice.colour);
@@ -315,7 +306,23 @@ function processNotices(response: any, labelArray: string[]) {
     }
   });
 
+  if (fragment.childNodes.length === 0) {
+    appendNoticeEmptyState(NoticeContainer, "No notices for today.");
+    return;
+  }
+
   NoticeContainer.appendChild(fragment);
+}
+
+function appendNoticeEmptyState(container: HTMLElement, message: string) {
+  const emptyState = document.createElement("div");
+  emptyState.classList.add("day-empty");
+  const img = document.createElement("img");
+  img.src = browser.runtime.getURL(LogoLight);
+  const text = document.createElement("p");
+  text.innerText = message;
+  emptyState.append(img, text);
+  container.append(emptyState);
 }
 
 function processNoticeColor(colour: string): string | undefined {
@@ -904,8 +911,13 @@ async function CreateUpcomingSection(assessments: any, activeSubjects: any) {
     }
   }
 
-  for (let i = 0; i < activeSubjects.length; i++) {
-    const element = activeSubjects[i];
+  const filterSubjects: FilterSubject[] = subjectsWithUpcomingAssessments(
+    assessments,
+    activeSubjects,
+  );
+
+  for (let i = 0; i < filterSubjects.length; i++) {
+    const element = filterSubjects[i];
     const colour = colours.find(
       (c: any) => c.name === `timetable.subject.colour.${element.code}`,
     );
@@ -919,7 +931,15 @@ async function CreateUpcomingSection(assessments: any, activeSubjects: any) {
     }
   }
 
-  CreateFilters(activeSubjects);
+  CreateFilters(filterSubjects);
+
+  for (let i = 0; i < assessments.length; i++) {
+    const subject = activeSubjectForAssessment(
+      assessments[i],
+      activeSubjects,
+    );
+    assessments[i].filterCode = subject?.code ?? assessments[i].code;
+  }
 
   for (let i = 0; i < assessments.length; i++) {
     const element: any = assessments[i];
@@ -1003,7 +1023,7 @@ function createAssessmentDateDiv(date: string, value: any, datecase?: any) {
     const element = assessments[i];
     const item = document.createElement("div");
     item.classList.add("upcoming-assessment");
-    item.setAttribute("data-subject", element.code);
+    item.setAttribute("data-subject", element.filterCode ?? element.code);
     item.id = `assessment${element.id}`;
     item.style.cssText = element.colour;
 
@@ -1095,24 +1115,35 @@ async function GetLessonColours() {
   }
 }
 
-function CreateFilters(subjects: any) {
-  const filteroptions = settingsState.subjectfilters;
+function CreateFilters(subjects: FilterSubject[]) {
+  const filteroptions = { ...settingsState.subjectfilters };
   const filterdiv = document.querySelector("#upcoming-filters");
+  if (!filterdiv) return;
+
+  filterdiv.innerHTML = "";
+  const activeCodes = new Set(subjects.map((s) => s.code));
+
+  for (const key of Object.keys(filteroptions)) {
+    if (!activeCodes.has(key)) {
+      delete filteroptions[key];
+    }
+  }
 
   for (let i = 0; i < subjects.length; i++) {
     const element = subjects[i];
     if (!Object.prototype.hasOwnProperty.call(filteroptions, element.code)) {
       filteroptions[element.code] = true;
-      settingsState.subjectfilters = filteroptions;
     }
     filterdiv!.append(
       CreateSubjectFilter(
         element.code,
-        element.colour,
+        element.colour ?? "",
         filteroptions[element.code],
       ),
     );
   }
+
+  settingsState.subjectfilters = filteroptions;
 }
 
 function CreateSubjectFilter(
@@ -1131,9 +1162,9 @@ function CreateSubjectFilter(
   label.append(input, span);
 
   input.addEventListener("change", function (change) {
-    const filters = settingsState.subjectfilters;
-    const id = (change.target as HTMLInputElement).id.split("-")[1];
-    filters[id] = (change.target as HTMLInputElement).checked;
+    const checked = (change.target as HTMLInputElement).checked;
+    const filters = { ...settingsState.subjectfilters };
+    filters[subjectcode] = checked;
     settingsState.subjectfilters = filters;
   });
 

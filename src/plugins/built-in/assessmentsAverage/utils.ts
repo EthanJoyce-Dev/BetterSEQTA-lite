@@ -341,6 +341,17 @@ function createWeightLabel(
   statsContainer.appendChild(weightLabel);
 }
 
+/** Escapes a value for a '...' string inside an injected page script. */
+function escJsSingleQuoted(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
+
 export const isFirefox =
   navigator.userAgent.toLowerCase().indexOf("firefox") > -1 &&
   !navigator.userAgent.toLowerCase().includes("seamonkey") &&
@@ -353,7 +364,7 @@ async function fetchPDFAsArrayBuffer(url: string): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
       const requestId = `pdf-fetch-${Date.now()}-${Math.random()}`;
-      const escapedUrl = url.replace(/'/g, "\\'");
+      const escapedUrl = escJsSingleQuoted(url);
 
       script.textContent = `
         (function() {
@@ -443,8 +454,6 @@ export async function extractPDFText(url: string): Promise<string> {
     if (isFirefox) {
       const { lib: pdfLibUrl, worker: pdfWorkerUrl } =
         getPdfjsPageContextUrls();
-      const escJsSingleQuoted = (s: string) =>
-        s.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
       const pdfLibInj = escJsSingleQuoted(pdfLibUrl);
       const pdfWorkerInj = escJsSingleQuoted(pdfWorkerUrl);
 
@@ -452,10 +461,7 @@ export async function extractPDFText(url: string): Promise<string> {
         const script = document.createElement("script");
         const requestId = `pdf-extract-${Date.now()}-${Math.random()}`;
 
-        const escapedUrl = url
-          .replace(/\\/g, "\\\\")
-          .replace(/'/g, "\\'")
-          .replace(/"/g, '\\"');
+        const escapedUrl = escJsSingleQuoted(url);
 
         script.textContent = `
           (function() {
@@ -795,6 +801,7 @@ export async function parseAssessments(api: any) {
     ...(state["marks"] ?? []),
     ...(state["upcoming"] ?? []),
     ...(state["pending"] ?? []),
+    ...(state["feedback"] ?? []),
   ];
   if (!marks) return;
 

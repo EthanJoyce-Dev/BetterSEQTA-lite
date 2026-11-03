@@ -356,7 +356,7 @@
                     />                
                   {:else if setting.type === 'select'}
                     <Select
-                    state={pluginSettingsValues[plugin.pluginId]?.[key] ?? setting.default}
+                    value={pluginSettingsValues[plugin.pluginId]?.[key] ?? setting.default}
                     onChange={(value) => updatePluginSetting(plugin.pluginId, key, value)}
                     options={(setting.options as string[]).map(opt => ({
                       value: opt,

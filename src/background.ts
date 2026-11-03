@@ -6,6 +6,7 @@ import { fetchNews } from "./background/news";
 import { googleCalendarHandlers } from "./background/googleCalendar";
 import { updaterHandlers } from "./background/updater";
 import { getApiBase } from "@/seqta/utils/DevApiBase";
+import { isAllowedFetchUrl } from "./background/allowedFetchUrl";
 
 function reloadSeqtaPages() {
   const result = browser.tabs.query({});
@@ -112,6 +113,10 @@ function handleFetchFromUrl(request: any, sendResponse: MessageSender): boolean 
   const { url } = request;
   if (!url || typeof url !== "string") {
     sendResponse({ error: "Missing url" });
+    return false;
+  }
+  if (!isAllowedFetchUrl(url)) {
+    sendResponse({ error: "URL not allowed" });
     return false;
   }
   fetch(url, { cache: "no-store" })

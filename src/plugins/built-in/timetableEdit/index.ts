@@ -162,7 +162,9 @@ const timetableEditPlugin: Plugin<{}, TimetableStorage> = {
       getOverrides()[String(ci)] ?? getOverridesBySubject()[description];
 
     const processEntry = (entry: HTMLElement): void => {
-      if (entry.classList.contains("assessment") || entry.hasAttribute("data-timetable-edit-processed")) return;
+      // Lessons with an assessment attached have both `class` and `assessment`
+      // classes; they still need the per-lesson override.
+      if (entry.hasAttribute("data-timetable-edit-processed")) return;
 
       const ciStr = entry.getAttribute("data-instance");
       if (!ciStr) return;

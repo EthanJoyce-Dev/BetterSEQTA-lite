@@ -3,6 +3,21 @@
 BetterSEQTA+ Lite has its own version numbers ([semver](https://semver.org)), starting at 1.0.0.
 Each release notes which BetterSEQTA+ version it is based on.
 
+## Unreleased
+
+Based on BetterSEQTA+ 3.7.2, with fixes from 3.7.3–3.7.7.
+
+- Fixed icons on the Courses and Assessments pages showing as text after SEQTA's update
+- Fixed home page notices sometimes not loading (on Learn and Engage)
+- Fixed upcoming assessments missing subjects when you have more than one active year
+- Fixed custom background images and videos not showing in settings
+- Fixed edited teacher names not showing on lessons that have an assessment
+- Fixed Enhanced Navigation arrows staying on screen after leaving a course
+- Assessment averages now count "Feedback Released" assessments
+- Settings dropdowns have better contrast and work with the keyboard; SEQTA's own dropdowns are easier to read
+- Security: the theme store's background download only fetches from betterseqta.org and GitHub
+- Security: links passed into the assessment PDF reader are fully escaped
+
 ## 1.2.1
 
 Based on BetterSEQTA+ 3.7.2.

@@ -340,7 +340,22 @@ const enhancedNavigationPlugin: Plugin<typeof settings> = {
     });
     bodyObserver.observe(document.body, { childList: true });
 
+    // The arrows live on <body>, so they stay behind when you leave a course.
+    // Check after SEQTA has rendered the new page (a slow render gets a second look).
+    const removeArrowsIfNoCourse = () => {
+      if (!document.querySelector(".course")) {
+        document.getElementById(ARROW_CONTAINER_ID)?.remove();
+      }
+    };
+    const pageChange = api.seqta.onPageChange(() => {
+      requestAnimationFrame(removeArrowsIfNoCourse);
+      setTimeout(removeArrowsIfNoCourse, 500);
+    });
+
     return () => {
+      window.removeEventListener("resize", positionArrows);
+      window.removeEventListener("scroll", positionArrows, true);
+      pageChange.unregister();
       bodyObserver.disconnect();
       document.getElementById(ARROW_CONTAINER_ID)?.remove();
       document.getElementById(STYLE_ID)?.remove();
